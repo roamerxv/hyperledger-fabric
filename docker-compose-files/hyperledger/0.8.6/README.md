@@ -125,7 +125,7 @@ git clone https://github.com/roamerxv/hyperledger-fabric.git
 ##### b. 进入hyperledger 1.0 模板目录
 
 ```
-$ cd docker-compose-files/hyperledger/1.0
+$ cd docker-compose-files/hyperledger/0.8.6
 ```
     
 ##### c. 查看包括若干模板文件，功能如下。
