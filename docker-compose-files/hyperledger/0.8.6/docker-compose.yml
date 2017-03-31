@@ -1,0 +1,94 @@
+# https://github.com/yeasy/docker-compose-files/tree/master/hyperledger
+# This compose file will start a Hyperledger Fabric 1.0 MVE, including
+# * ca
+# * orderer
+# * peer
+# * sdk for testing
+
+version: '2.0'
+
+services:
+  ca:
+    image: hyperledger/fabric-ca
+    container_name: fabric-ca
+    hostname: ca
+  #  command: /go/src/github.com/hyperledger/fabric-ca/bin/ca server start -ca testdata/ec.pem -ca-key testdata/ec-key.pem -config testdata/testconfig.json
+    ports:
+      - "8888:8888"
+    command: fabric-ca-server start  -c testdata/testconfig.json
+
+  orderer:
+    image: hyperledger/fabric-orderer
+    container_name: fabric-orderer
+    hostname: orderer
+    environment:
+        - ORDERER_GENERAL_LEDGERTYPE=ram
+        - ORDERER_GENERAL_BATCHTIMEOUT=10s
+        - ORDERER_GENERAL_MAXMESSAGECOUNT=10
+        - ORDERER_GENERAL_MAXWINDOWSIZE=1000
+        - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+        - ORDERER_GENERAL_LISTENPORT=7050
+        - ORDERER_RAMLEDGER_HISTORY_SIZE=100
+        - CONFIGTX_ORDERER_ORDERERTYPE=solo
+    ports:
+      - "7050:7050"
+    command: orderer
+
+  peer0:
+    extends:
+      file: peer.yml
+      service: peer
+    container_name: fabric-peer0
+    hostname: peer0
+    environment:
+      - CORE_PEER_ID=peer0
+      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
+    links:
+      - ca
+      - orderer
+    ports:
+      - 8051:7051
+    depends_on:
+      - ca
+      - orderer
+
+  peer1:
+    extends:
+      file: peer.yml
+      service: peer
+    container_name: fabric-peer1
+    hostname: peer1
+    environment:
+      - CORE_PEER_ID=peer1
+      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
+    links:
+      - ca
+      - orderer
+    ports:
+      - 8052:7051
+    depends_on:
+      - ca
+      - orderer
+
+  peer2:
+    extends:
+      file: peer.yml
+      service: peer
+    container_name: fabric-peer2
+    hostname: peer2
+    environment:
+      - CORE_PEER_ID=peer2
+      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
+    links:
+      - ca
+      - orderer
+    ports:
+      - 8053:7051
+    depends_on:
+      - ca
+      - orderer
+
+#networks:
+#  default:
+#    external:
+#      name: hyperledger_fabric
