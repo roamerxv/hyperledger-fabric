@@ -1,4 +1,4 @@
-在CentOS 7.2下安装Hyperledger fabric 1.0.0 preview版本（solo共识模式）
+# 在CentOS 7.2下安装Hyperledger fabric 1.0.0 preview版本（solo共识模式）
 ## 一. 安装centos和docker 等组件
 ### A. 安装centos x86-64 Minimal(IP:192.168.2.10)
 内核版本需要3.10 以上。centos 7 完全支持.
