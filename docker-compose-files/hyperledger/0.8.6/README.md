@@ -108,8 +108,8 @@ docker pull yeasy/hyperledger-fabric-base:$IMG_VERSION \
 #### 5.设置网络
 
 ```
-$ docker network create fabric_noops
-$ docker network create fabric_pbft
+docker network create fabric_noops
+docker network create fabric_pbft
 ```
 
 #### 6.启动 Fabric 1.0 
@@ -118,13 +118,13 @@ $ docker network create fabric_pbft
 
 ```
 $ cd ~
-git clone https://github.com/yeasy/docker-compose-files
+git clone https://github.com/roamerxv/hyperledger-fabric.git
 ```
 
 ##### b. 进入hyperledger 1.0 模板目录
 
 ```
-$ cd /root/docker-compose-files/hyperledger/1.0
+$ cd docker-compose-files/hyperledger/1.0
 ```
     
 ##### c. 查看包括若干模板文件，功能如下。
@@ -132,49 +132,8 @@ $ cd /root/docker-compose-files/hyperledger/1.0
 peers.yml: 包含 peer 节点的服务模板。
 docker-compose.yml: 启动 1 个 最小化的环境，包括 1 个 peer 节点、1 个 Orderer 节点、1 个 CA 节点。
 
-##### d. 修改成3个peer的方式。
-docker-compose.yml 里面增加如下代码
 
-```
-  peer1:
-    extends:
-      file: peer.yml
-      service: peer
-    container_name: fabric-peer1
-    hostname: peer1
-    environment:
-      - CORE_PEER_ID=peer1
-      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
-    links:
-      - ca
-      - orderer
-    ports:
-      - 8052:7051
-    depends_on:
-      - ca
-      - orderer
-
-  peer2:
-    extends:
-      file: peer.yml
-      service: peer
-    container_name: fabric-peer2
-    hostname: peer2
-    environment:
-      - CORE_PEER_ID=peer2
-      - CORE_PEER_COMMITTER_LEDGER_ORDERER=orderer:7050
-    links:
-      - ca
-      - orderer
-    ports:
-      - 8053:7051
-    depends_on:
-      - ca
-      - orderer
-
-```
-
-##### e. 部署和启动 Fabric 1.0
+##### d. 部署和启动 Fabric 1.0
 
 ```
 $ docker-compose -f docker-compose.yml up -d
