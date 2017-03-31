@@ -259,7 +259,7 @@ $ cd ~/docker-compose-files/hyperledger/1.0
 $ docker-compose logs -f
 ```
 
-###B. 测试 java 编写的 ChainCode
+### B. 测试 java 编写的 ChainCode
 ####1. 增加一个 javaenv 的容器，以便于使用 java 的 CC 代码
 
 ```
