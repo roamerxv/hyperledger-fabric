@@ -64,9 +64,9 @@ $ pip install -U docker-compose
 https://github.com/yeasy/docker-compose-files/tree/master/hyperledger/1.0
 
 ### A.测试 Golang 编写的 ChainCode
-####1. 安装操作系统和docker （略）
-####2. 安装python pip（略）
-####3. 安装 docker-compose 最新发布版本
+#### 1. 安装操作系统和docker （略）
+#### 2. 安装python pip（略）
+#### 3. 安装 docker-compose 最新发布版本
 
 ```
 pip install docker-compose 
@@ -101,7 +101,8 @@ docker pull yeasy/hyperledger-fabric-base:$IMG_VERSION \
   && docker tag yeasy/hyperledger-fabric-ca:$IMG_VERSION hyperledger/fabric-ca \
   && docker tag yeasy/hyperledger-fabric-base:$IMG_VERSION hyperledger/fabric-baseimage \
   && docker tag yeasy/hyperledger-fabric-base:$IMG_VERSION hyperledger/fabric-ccenv:$ARCH-$BASE_VERSION \
-  && docker tag yeasy/hyperledger-fabric-base:$IMG_VERSION hyperledger/fabric-baseos:$ARCH-$BASE_VERSION  
+  && docker tag yeasy/hyperledger-fabric-base:$IMG_VERSION hyperledger/fabric-baseos:$ARCH-$BASE_VERSION
+
 ```
 
 
