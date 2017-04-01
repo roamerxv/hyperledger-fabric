@@ -91,7 +91,7 @@ While those number tag (e.g., 0.8) is stable and manually set.
 ARCH=x86_64
 BASE_VERSION=1.0.0-preview
 PROJECT_VERSION=1.0.0-preview
-IMG_VERSION=0.8.6
+IMG_VERSION=0.8.7
 docker pull yeasy/hyperledger-fabric-base:$IMG_VERSION \
   && docker pull yeasy/hyperledger-fabric-peer:$IMG_VERSION \
   && docker pull yeasy/hyperledger-fabric-orderer:$IMG_VERSION \
