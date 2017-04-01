@@ -8,6 +8,25 @@
 version: '2.0'
 
 services:
+
+  cli:
+    extends:
+      file: peer.yml
+      service: peer
+    container_name: fabric-cli
+    tty: true
+    environment:
+      - CORE_PEER_ADDRESSAUTODETECT=true
+      - CORE_LOGGING_LEVEL=DEBUG
+      - CORE_PEER_ID=cli
+      - CORE_PEER_ENDORSER_ENABLED=false
+    command: /bin/sh
+    links:
+      - orderer:orderer
+      - peer0:peer0
+      - peer1:peer1
+      - peer2:peer2
+
   ca:
     image: hyperledger/fabric-ca
     container_name: fabric-ca

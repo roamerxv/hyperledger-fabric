@@ -1,4 +1,4 @@
-# 在CentOS 7.2下安装Hyperledger fabric 1.0.0 preview版本（solo共识模式）
+# 在CentOS 7.2下安装Hyperledger fabric 1.0.0 alpha版本（solo共识模式）
 ## 一. 安装centos和docker 等组件
 ### A. 安装centos x86-64 Minimal(IP:192.168.2.10)
 内核版本需要3.10 以上。centos 7 完全支持.
@@ -125,13 +125,13 @@ git clone https://github.com/roamerxv/hyperledger-fabric.git
 ##### b. 进入hyperledger 1.0 模板目录
 
 ```
-$ cd docker-compose-files/hyperledger/0.8.6
+$ cd docker-compose-files/hyperledger/0.8
 ```
     
 ##### c. 查看包括若干模板文件，功能如下。
 
 peers.yml: 包含 peer 节点的服务模板。
-docker-compose.yml: 启动 1 个 最小化的环境，包括 1 个 peer 节点、1 个 Orderer 节点、1 个 CA 节点。
+docker-compose.yml: 启动 1 个微型的测试环境，包括 3 个 peer 节点、1 个 Orderer 节点、1 个 CA 节点。 1 个 cli 节点
 
 
 ##### d. 部署和启动 Fabric 1.0
@@ -141,12 +141,13 @@ $ docker-compose -f docker-compose.yml up -d
 ```
     
 ####7. 查看容器信息
-    应该有5个启动的容器，分别是
+    应该有6个启动的容器，分别是
         1. fabric-peer0
         2. fabric-peer1
         3. fabric-peer2
         4. fabric-orderer
         5. fabric-ca
+        6. fabric-cli
         
     
 ```
@@ -155,10 +156,10 @@ $ docker  ps
 $ docker-compose ps 
 ```
 #### 8.  建立一个channel 名字是myc1
-进入任何一个peer容器内均可
+进入任何一个peer容器 或者 cli 容器 内均可
 
 ```
-docker exec -it fabric-peer2 bash
+docker exec -it fabric-cli bash
 
 peer channel create  -o orderer:7050 -c myc1
 
@@ -189,7 +190,7 @@ CORE_PEER_ADDRESS=peer2:7051 peer channel join -b myc1.block -o orderer:7050
 * 修改CORE_PEER_ADDRESS参数值即可指定在哪个peer上 install 和 instantiate。</font>
 
 ```
-$ docker exec -it fabric-peer0 bash
+$ docker exec -it fabric-cli bash
 
 # 部署一个chaincode
 CORE_PEER_ADDRESS=peer0:7051 peer chaincode install  -C myc1 -n mycc -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02   -c '{}'  -v 1.1.0    -o orderer:7050
@@ -270,7 +271,7 @@ docker pull hyperledger/fabric-javaenv:x86_64-1.0.0-alpha \
 #### 2.进入任意一个容器
 
 ```
-docker exec -it fabric-peer2 bash
+docker exec -it fabric-cli bash
 
 ```
 #### 3.部署和实例化一个 ChainCode
