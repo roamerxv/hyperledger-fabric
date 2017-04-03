@@ -35,6 +35,7 @@ services:
       - "7059"  # tlsCAA
     volumes: # docker.sock is mapped as the default CORE_VM_ENDPOINT
       - /var/run/docker.sock:/var/run/docker.sock
+    
     #volumes:
     #    - /var/run/:/host/var/run/
     command: peer node start 

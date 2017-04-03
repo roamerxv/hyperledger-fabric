@@ -193,7 +193,7 @@ CORE_PEER_ADDRESS=peer2:7051 peer channel join -b myc1.block -o orderer:7050
 $ docker exec -it fabric-cli bash
 
 # 部署一个chaincode
-CORE_PEER_ADDRESS=peer0:7051 peer chaincode install  -C myc1 -n mycc -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02   -c '{}'  -v 1.1.0    -o orderer:7050
+CORE_PEER_ADDRESS=peer0:7051 peer chaincode install  -C myc1 -n mycc -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02    -v 1.1.0    -o orderer:7050
 
 # 实例化一个chaincode
 CORE_PEER_ADDRESS=peer0:7051 peer chaincode instantiate -C myc1 -n mycc -p github.com/hyperledger/fabric/examples/chaincode/go/chaincode_example02 -c '{"Args":["init","a","100","b","200"]}'  -v 1.1.0 -o orderer:7050
@@ -268,7 +268,7 @@ $ docker-compose logs -f
 docker pull hyperledger/fabric-javaenv:x86_64-1.0.0-alpha \
   && docker tag hyperledger/fabric-javaenv:x86_64-1.0.0-alpha hyperledger/fabric-javaenv:$ARCH-$BASE_VERSION  
 ```
-#### 2.进入任意一个容器
+#### 2.进入cli容器
 
 ```
 docker exec -it fabric-cli bash
@@ -277,7 +277,7 @@ docker exec -it fabric-cli bash
 #### 3.部署和实例化一个 ChainCode
 
 ```
-CORE_PEER_ADDRESS=peer0:7051 peer chaincode install -l java  -n mycc3 -p /go/src/github.com/hyperledger/fabric/examples/chaincode/java/SimpleSample   -c '{}'  -v 1.1.0    -o orderer:7050
+CORE_PEER_ADDRESS=peer0:7051 peer chaincode install -l java  -n mycc3 -p /go/src/github.com/hyperledger/fabric/examples/chaincode/java/SimpleSample    -v 1.1.0    -o orderer:7050
 
 
 CORE_PEER_ADDRESS=peer0:7051 peer chaincode instantiate -l java   -n mycc3 -p /go/src/github.com/hyperledger/fabric/examples/chaincode/java/SimpleSample   -c '{"Args":["init","roamer","100","dly","200"]}'  -v 1.1.0    -o orderer:7050
@@ -292,3 +292,26 @@ CORE_PEER_ADDRESS=peer0:7051 peer chaincode invoke  -l java  -n mycc3  -c  '{"Fu
 #由于java 的 SimpleSample 里面没有查询功能，只能通过 cc 容器的日志查看来确定是否测试成功
 docker logs -f  dev-peer0-mycc3-1.1.0
 ```
+### C. 更新一个的 ChainCode
+大致过程是：
+* 重新 install 一个 cc，名字不用改，修改版本号
+* 不需要 instantiate.
+* 调用新版本的 cc。就可以看见修改过的变化了
+<font color="red">注意：如果重建docker container ，需要删除之前的 docker image。否则会产生更改的 cc 代码无法起作用的问题</font>
+
+```
+docker exec -it fabric-cli bash
+
+#确认 CC代码已经更新
+
+# 安装新版本的 CC 代码
+CORE_PEER_ADDRESS=peer0:7051 peer chaincode install -l java  -n mycc3 -p /go/src/github.com/hyperledger/fabric/examples/chaincode/java/SimpleSample    -v 1.2.0    -o orderer:7050
+
+# upgrade CC 代码
+CORE_PEER_ADDRESS=peer0:7051 peer chaincode upgrade -l java   -n mycc3 -p /go/src/github.com/hyperledger/fabric/examples/chaincode/java/SimpleSample   -c '{"Args":["init","roamer","100","dly","200"]}'  -v 1.2.0    -o orderer:7050
+
+#调用新版本的 CC，确认修改成功
+CORE_PEER_ADDRESS=peer0:7051 peer chaincode invoke  -l java  -n mycc3  -c  '{"Function":"transfer", "Args": ["roamer","dly","1"]}'  -v 1.2.0  -o orderer:7050 
+
+```
+

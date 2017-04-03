@@ -21,6 +21,8 @@ services:
       - CORE_PEER_ID=cli
       - CORE_PEER_ENDORSER_ENABLED=false
     command: /bin/sh
+    volumes:
+      - ./chaincode/java/SimpleSample:/go/src/github.com/hyperledger/fabric/examples/chaincode/java/SimpleSample 
     links:
       - orderer:orderer
       - peer0:peer0
