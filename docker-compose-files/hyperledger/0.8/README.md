@@ -140,7 +140,7 @@ docker-compose.yml: 启动 1 个微型的测试环境，包括 3 个 peer 节点
 $ docker-compose -f docker-compose.yml up -d
 ```
     
-####7. 查看容器信息
+#### 7. 查看容器信息
     应该有6个启动的容器，分别是
         1. fabric-peer0
         2. fabric-peer1
