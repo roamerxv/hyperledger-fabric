@@ -91,7 +91,7 @@ While those number tag (e.g., 0.8) is stable and manually set.
 ARCH=x86_64
 BASE_VERSION=1.0.0-preview
 PROJECT_VERSION=1.0.0-preview
-IMG_VERSION=0.8.7
+IMG_VERSION=0.8.8
 docker pull yeasy/hyperledger-fabric-base:$IMG_VERSION \
   && docker pull yeasy/hyperledger-fabric-peer:$IMG_VERSION \
   && docker pull yeasy/hyperledger-fabric-orderer:$IMG_VERSION \
@@ -312,6 +312,10 @@ CORE_PEER_ADDRESS=peer0:7051 peer chaincode upgrade -l java   -n mycc3 -p /go/sr
 
 #调用新版本的 CC，确认修改成功
 CORE_PEER_ADDRESS=peer0:7051 peer chaincode invoke  -l java  -n mycc3  -c  '{"Function":"transfer", "Args": ["roamer","dly","1"]}'  -v 1.2.0  -o orderer:7050 
+
+#查看 CC 的日志,确认修改的内容成功
+docker logs -f dev-peer0-mycc3-1.2.0
+
 
 ```
 

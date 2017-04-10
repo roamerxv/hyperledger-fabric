@@ -111,7 +111,7 @@ public class SimpleSample extends ChaincodeBase {
 		stub.putState(fromName,""+ valFrom);
 		stub.putState(toName, ""+valTo);
 
-		System.out.println("Transfer complete! Opps yaaaa !");
+		System.out.println("Transfer complete! yeah!!!!!!####");
 
 		return null;
 
