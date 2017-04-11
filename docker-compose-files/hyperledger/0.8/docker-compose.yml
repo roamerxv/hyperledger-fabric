@@ -22,7 +22,8 @@ services:
       - CORE_PEER_ENDORSER_ENABLED=false
     command: /bin/sh
     volumes:
-      - ./chaincode/java/SimpleSample:/go/src/github.com/hyperledger/fabric/examples/chaincode/java/SimpleSample 
+      #- ./chaincode/java/SimpleSample:/go/src/github.com/hyperledger/fabric/examples/chaincode/java/SimpleSample 
+      - /Users/roamer/Documents/Projects/Hyperledger/roamer/chaincode/cc-example:/go/src/github.com/hyperledger/fabric/examples/chaincode/java/cc-example
     links:
       - orderer:orderer
       - peer0:peer0

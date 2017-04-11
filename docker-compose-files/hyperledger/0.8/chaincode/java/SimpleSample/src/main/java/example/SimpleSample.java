@@ -53,7 +53,7 @@ public class SimpleSample extends ChaincodeBase {
 				stub.delState(arg);
 			break;
 		case "query":
-			return query(stub, function, args);
+			query(stub, function, args);
 		default:
 			return transfer(stub, args);
 		}
@@ -134,10 +134,12 @@ public class SimpleSample extends ChaincodeBase {
 
 
 	public String query(ChaincodeStub stub, String function, String[] args) {
+		System.out.println("需要查询的账号是"+ args[0]);
 		if(args.length!=1){
 			return "{\"Error\":\"Incorrect number of arguments. Expecting name of the person to query\"}";
 		}
 		String am =stub.getState(args[0]);
+		System.out.println(am);
 		if (am!=null&&!am.isEmpty()){
 			try{
 				int valA = Integer.parseInt(am);

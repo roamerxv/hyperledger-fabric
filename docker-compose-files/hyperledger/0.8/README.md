@@ -267,6 +267,9 @@ $ docker-compose logs -f
 ```
 docker pull hyperledger/fabric-javaenv:x86_64-1.0.0-alpha \
   && docker tag hyperledger/fabric-javaenv:x86_64-1.0.0-alpha hyperledger/fabric-javaenv:$ARCH-$BASE_VERSION  
+
+docker pull roamerxv/fabric-javaenv  \
+  && docker tag roamerxv/fabric-javaenv  hyperledger/fabric-javaenv:$ARCH-$BASE_VERSION  
 ```
 #### 2.进入cli容器
 
