@@ -1,0 +1,9 @@
+docker-compose-files/hyperledger/0.8/chaincode/java/cc-example/.gradle
+docker-compose-files/hyperledger/0.8/chaincode/java/cc-example/.idea
+docker-compose-files/hyperledger/0.8/chaincode/java/cc-example/gradle
+docker-compose-files/hyperledger/0.8/chaincode/java/cc-example/build
+docker-compose-files/.gradle
+docker-compose-files/.idea
+docker-compose-files/hyperledger/0.8/chaincode/java/cc-example-for-latest/.gradle
+docker-compose-files/hyperledger/0.8/chaincode/java/cc-example-for-latest/build
+docker-compose-files/hyperledger/0.8/chaincode/java/cc-example-for-latest/.idea

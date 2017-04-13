@@ -22,8 +22,10 @@ services:
       - CORE_PEER_ENDORSER_ENABLED=false
     command: /bin/sh
     volumes:
-      #- ./chaincode/java/SimpleSample:/go/src/github.com/hyperledger/fabric/examples/chaincode/java/SimpleSample 
-      - /Users/roamer/Documents/Projects/Hyperledger/roamer/chaincode/cc-example:/go/src/github.com/hyperledger/fabric/examples/chaincode/java/cc-example
+      # SimpleSample 是从配套的 javaenv image 里面剥离出来的。用于测试 cc 的upgrade 功能
+      - ./chaincode/java/SimpleSample:/go/src/github.com/hyperledger/fabric/examples/chaincode/java/SimpleSample
+      # cc-example-fot-latest 是从 fabric 最新的源码里面剥离出来的。用于测试 ChainCode java SDK 的功能
+      - ./chaincode/java/cc-example-for-latest:/go/src/github.com/hyperledger/fabric/examples/chaincode/java/cc-example
     links:
       - orderer:orderer
       - peer0:peer0

@@ -1,4 +1,4 @@
-# 在CentOS 7.2下安装Hyperledger fabric 1.0.0 alpha版本（solo共识模式）
+``# 在CentOS 7.2下安装Hyperledger fabric 1.0.0 alpha版本（solo共识模式）
 ## 一. 安装centos和docker 等组件
 ### A. 安装centos x86-64 Minimal(IP:192.168.2.10)
 内核版本需要3.10 以上。centos 7 完全支持.
@@ -267,9 +267,6 @@ $ docker-compose logs -f
 ```
 docker pull hyperledger/fabric-javaenv:x86_64-1.0.0-alpha \
   && docker tag hyperledger/fabric-javaenv:x86_64-1.0.0-alpha hyperledger/fabric-javaenv:$ARCH-$BASE_VERSION  
-
-docker pull roamerxv/fabric-javaenv  \
-  && docker tag roamerxv/fabric-javaenv  hyperledger/fabric-javaenv:$ARCH-$BASE_VERSION  
 ```
 #### 2.进入cli容器
 
@@ -322,3 +319,35 @@ docker logs -f dev-peer0-mycc3-1.2.0
 
 ```
 
+### D. 部署一个适应1.0.0 alpha 版本的 javaenv 的 ChainCode 运行环境（暂时未调试通过）
+#### 1. 修改fabric-javaenv的镜像 tag。使用我自己定义和更新的 基于 latest 版本的 javaenv image
+
+```
+docker pull roamerxv/fabric-javaenv  \
+  && docker tag roamerxv/fabric-javaenv  hyperledger/fabric-javaenv:x86_64-1.0.0-preview  
+```
+
+#### 2. 部署一个基于最新版本 client java sdk 开发的ChainCode
+链码项目的源码在本项目 docker-compose-files/hyperledger/0.8/chaincode/java目录下的cc-example
+
+    SimpleSample 是从配套的 javaenv image 里面剥离出来的。用于测试 cc 的upgrade 功能
+    cc-example-fot-latest 是从 fabric 最新的源码里面剥离出来的。用于测试 ChainCode java SDK 的功能
+
+```
+docker-compose up -d --build 
+
+docker exec -it fabric-cli bash
+
+CORE_PEER_ADDRESS=peer0:7051 peer chaincode install -l java  -n mycc3 -p /go/src/github.com/hyperledger/fabric/examples/chaincode/java/cc-example    -v 1.1.0    -o orderer:7050
+
+CORE_PEER_ADDRESS=peer0:7051 peer chaincode instantiate -l java   -n mycc3 -p /go/src/github.com/hyperledger/fabric/examples/chaincode/java/cc-example   -c '{"Args":["hello","roamer","100","dly","200"]}'  -v 1.1.0    -o orderer:7050
+
+```
+
+#### 3. 查看cc 容器的日志，以便确认是否部署成功
+
+```
+docker logs -f dev-peer0-mycc3-1.1.0
+#如果出现错误，手工启动容器，进行调试
+docker run -it dev-peer0-mycc3-1.1.0 bash
+```
