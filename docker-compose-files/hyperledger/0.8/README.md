@@ -9,11 +9,33 @@ $ uname -a
 Linux localhost.localdomain 3.10.0-514.6.1.el7.x86_64
 ```
 
-### B. 安装docker， 版本1.12.5（略过）
+### B. 安装docker， 不要用 centos 自带的，过低版本。通过 docker 官方的 repo 进行安装（略过）
+安装过程参考
+https://yeasy.gitbooks.io/docker_practice/content/install/centos.html
+
+```
+$ sudo tee /etc/yum.repos.d/docker.repo <<-'EOF'
+[dockerrepo]
+name=Docker Repository
+baseurl=https://yum.dockerproject.org/repo/main/centos/7/
+enabled=1
+gpgcheck=1
+gpgkey=https://yum.dockerproject.org/gpg
+EOF
+
+yum update
+
+yum install docker-engine
+
+systemctl enable docker
+
+systemctl restart docker
+
+```
 
 ```
 $ docker -v
-Docker version 1.12.5, build 047e51b/1.12.5
+Docker version 17.04.0-ce, build 4845c56
 ```
 
 ### C. 安装python-pip(可选)
@@ -57,6 +79,10 @@ $ docker-compose -v
 ```
 $ pip install -U docker-compose
 ```
+
+### e.也可以通过整理的 centos_init.sh 文件，在系统安装好后，初始化安装和配置所有环境。
+centos_init.sh 位于本项目的centos_install目录下
+
 ## 二. 搭建Fabric 1.0.0  preview演示环境( solo共识方式，带自定义channel)
 
 杨宝华的项目主页
@@ -351,3 +377,5 @@ docker logs -f dev-peer0-mycc3-1.1.0
 #如果出现错误，手工启动容器，进行调试
 docker run -it dev-peer0-mycc3-1.1.0 bash
 ```
+
+
