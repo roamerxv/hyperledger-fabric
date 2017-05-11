@@ -15,6 +15,21 @@ yum -y install  python-pip
 echo  -e "Init yum installed\n"
 
 
+
+cat <<EOF
++------------------------------------------------------------------------+
+|        ==========   安装时间同步			          ============       |
++------------------------------------------------------------------------+
+EOF
+yum install -y ntpdate
+ntpdate us.pool.ntp.org
+
+yum -y install ntp
+systemctl enable ntpd
+systemctl start ntpd
+
+
+
 cat <<EOF
 +------------------------------------------------------------------------+
 |        ==========   安装docker 官方维护版本         ============       |
