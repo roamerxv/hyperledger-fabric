@@ -1,4 +1,4 @@
-``# 在CentOS 7.2下安装Hyperledger fabric 1.0.0 alpha版本（solo共识模式）
+# 在CentOS 7.2下安装Hyperledger fabric 1.0.0 alpha版本（solo共识）
 ## 一. 安装centos和docker 等组件
 ### A. 安装centos x86-64 Minimal(IP:192.168.2.10)
 内核版本需要3.10 以上。centos 7 完全支持.
@@ -117,7 +117,7 @@ While those number tag (e.g., 0.8) is stable and manually set.
 ARCH=x86_64
 BASE_VERSION=1.0.0-preview
 PROJECT_VERSION=1.0.0-preview
-IMG_VERSION=latest
+IMG_VERSION=0.9.3
 docker pull yeasy/hyperledger-fabric-base:$IMG_VERSION \
   && docker pull yeasy/hyperledger-fabric-peer:$IMG_VERSION \
   && docker pull yeasy/hyperledger-fabric-orderer:$IMG_VERSION \
