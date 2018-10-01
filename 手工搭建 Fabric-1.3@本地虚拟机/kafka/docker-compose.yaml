@@ -1,0 +1,94 @@
+version: '3'
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper:latest
+    container_name: zookeeper
+    volumes:
+      - "/etc/localtime:/etc/localtime"
+      - "/root/kafka/zookeeper/data:/opt/zookeeper-3.4.9/data"
+      - "/root/kafka/zookeeper/conf:/opt/zookeeper-3.4.9/conf"
+    restart: always
+    ports:
+      - "2181:2181"
+    logging: 
+        driver: "json-file" 
+        options: 
+            max-size: "100m" 
+  
+  kafka-001:
+    image: wurstmeister/kafka:2.11-1.1.1
+    container_name: kafka-001
+    volumes:
+      - "/etc/localtime:/etc/localtime"
+      - "./kafka/data-001:/kafka/kafka-logs-001"
+    restart: always
+    environment:
+      - "KAFKA_BROKER_ID=101"
+      - "KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181"
+      - "KAFKA_DELETE_TOPIC_ENABLE=true"
+      - "KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://192.168.188.111:9092"
+      - "KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092"
+      - "KAFKA_LOG_DIRS=/kafka/kafka-logs-001"
+    ports:
+      - "9092:9092"
+    working_dir: "/opt/kafka"
+    links:
+      - "zookeeper"
+    depends_on:
+      - "zookeeper"  
+    logging: 
+        driver: "json-file" 
+        options: 
+            max-size: "100m" 
+
+  kafka-002:
+    image: wurstmeister/kafka:2.11-1.1.1
+    container_name: kafka-002
+    volumes:
+      - "/etc/localtime:/etc/localtime"
+      - "./kafka/data-002:/kafka/kafka-logs-002"
+    restart: always
+    environment:
+      - "KAFKA_BROKER_ID=102"
+      - "KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181"
+      - "KAFKA_DELETE_TOPIC_ENABLE=true"
+      - "KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://192.168.188.111:9093"
+      - "KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092"
+      - "KAFKA_LOG_DIRS=/kafka/kafka-logs-002"
+    ports:
+      - "9093:9092"
+    working_dir: "/opt/kafka"
+    links:
+      - "zookeeper"
+    depends_on:
+      - "zookeeper"
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "100m"
+
+  kafka-003:
+    image: wurstmeister/kafka:2.11-1.1.1
+    container_name: kafka-003
+    volumes:
+      - "/etc/localtime:/etc/localtime"
+      - "./kafka/data-003:/kafka/kafka-logs-003"
+    restart: always
+    environment:
+      - "KAFKA_BROKER_ID=103"
+      - "KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181"
+      - "KAFKA_DELETE_TOPIC_ENABLE=true"
+      - "KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://192.168.188.111:9094"
+      - "KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092"
+      - "KAFKA_LOG_DIRS=/kafka/kafka-logs-003"
+    ports:
+      - "9094:9092"
+    working_dir: "/opt/kafka"
+    links:
+      - "zookeeper"
+    depends_on:
+      - "zookeeper"
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "100m"
