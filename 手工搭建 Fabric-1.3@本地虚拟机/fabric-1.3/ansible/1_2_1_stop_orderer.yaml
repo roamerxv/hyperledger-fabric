@@ -1,0 +1,13 @@
+- hosts: orderer  
+  vars:
+    orderer_process_name: orderer
+  remote_user: root
+  gather_facts: no
+  tasks:
+    - name: 获取 orderer 进程
+      shell: "ps -ef | grep -v grep | grep -w {{ orderer_process_name }} | awk '{print $2}'"
+      register: running_processes    
+
+    - name: 杀掉 orderer 进程
+      shell: "kill {{ item }}"
+      with_items: "{{ running_processes.stdout_lines }}"  

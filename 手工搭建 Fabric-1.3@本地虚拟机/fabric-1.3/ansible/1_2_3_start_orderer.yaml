@@ -1,0 +1,7 @@
+- hosts: orderer  
+  vars:
+  remote_user: root
+  gather_facts: no
+  tasks:
+    - name: 启动 orderer 进程
+      shell: "nohup /opt/fabric/orderer/startOrderer.sh &"

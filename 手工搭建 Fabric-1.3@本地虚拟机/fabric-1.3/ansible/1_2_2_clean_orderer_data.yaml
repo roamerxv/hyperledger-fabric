@@ -1,0 +1,9 @@
+- hosts: orderer  
+  vars:
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "删除 orderer 的数据"   
+    file:
+        path: /opt/fabric/orderer/data
+        state: absent

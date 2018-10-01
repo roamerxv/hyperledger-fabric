@@ -1,0 +1,9 @@
+- hosts: peers  
+  vars:
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "删除 peer 的数据"   
+    file:
+        path: /opt/fabric/peer/data
+        state: absent

@@ -1,0 +1,13 @@
+- hosts: peers  
+  vars:
+    process_name: peer
+  remote_user: root
+  gather_facts: no
+  tasks:
+    - name: 获取 peer 进程
+      shell: "ps -ef | grep -v grep | grep -w {{ process_name }} | awk '{print $2}'"
+      register: running_processes    
+
+    - name: 杀掉 peer 进程
+      shell: "kill {{ item }}"
+      with_items: "{{ running_processes.stdout_lines }}"  

@@ -1,0 +1,21 @@
+- hosts: kafka  
+  vars:
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "删除 kafka 001 的数据"   
+    file:
+        path: /root/kafka/kafka/data-001
+        state: absent
+  - name:  "删除 kafka 002 的数据"           
+    file:
+        path: /root/kafka/kafka/data-002
+        state: absent
+  - name:  "删除 kafka 003 的数据"           
+    file:
+        path: /root/kafka/kafka/data-003
+        state: absent
+  - name:  "删除 zookeeper 的数据"           
+    file:
+        path: /root/kafka/zookeeper/data
+        state: absent

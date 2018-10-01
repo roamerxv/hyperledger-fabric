@@ -1,0 +1,8 @@
+- hosts: kafka  
+  vars:
+    kafka_dodcker_composer_file:  /root/kafka/docker-compose.yaml
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "启动 kafka 的 docker 容器 "
+    shell:  docker-compose -f {{ kafka_dodcker_composer_file }} start

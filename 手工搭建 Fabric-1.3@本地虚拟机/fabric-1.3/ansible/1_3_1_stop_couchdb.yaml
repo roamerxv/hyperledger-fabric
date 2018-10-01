@@ -1,0 +1,9 @@
+- hosts: peers  
+  vars:
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "停止 peer 上的 couchdb 服务 "
+    service:
+      name: couchdb
+      state: stopped

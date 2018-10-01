@@ -1,0 +1,29 @@
+# 关闭 peer
+- import_playbook: 1_4_1_stop_peer.yaml
+# 关闭 couchdb
+- import_playbook: 1_3_1_stop_couchdb.yaml
+# 关闭 order
+- import_playbook: 1_2_1_stop_orderer.yaml
+# 关闭 kafka 
+- import_playbook: 1_1_1_stop_kafaka.yaml
+
+
+# 清理kafka 数据
+- import_playbook: 1_1_2_clean_kafaka_data.yaml
+# 清理 orderer 数据
+- import_playbook: 1_2_2_clean_orderer_data.yaml
+# 清理 couchdb 数据
+- import_playbook: 1_3_2_clean_couchdb_data.yaml
+# 清理 peer 数据（启用 couchdb 的时候没有数据文件）
+- import_playbook: 1_4_2_clean_peer_data.yaml
+
+# 启动 kafka
+- import_playbook: 1_1_3_start_kafaka.yaml
+# 启动 orderer
+- import_playbook: 1_2_3_start_orderer.yaml
+# 启动 couchd
+- import_playbook: 1_3_3_start_couchdb.yaml
+# 启动 peer 进程
+- import_playbook: 1_4_3_start_peer.yaml
+
+
