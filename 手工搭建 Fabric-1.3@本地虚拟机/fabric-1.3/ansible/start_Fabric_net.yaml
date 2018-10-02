@@ -1,0 +1,8 @@
+# 启动 kafka
+- import_playbook: ./kafka/1_1_3_start_kafaka.yaml
+# 启动 orderer
+- import_playbook: ./orderer/1_2_3_start_orderer.yaml
+# 启动 couchd
+- import_playbook: ./peer/1_3_3_start_couchdb.yaml
+# 启动 peer 进程
+- import_playbook: ./peer/1_4_3_start_peer.yaml

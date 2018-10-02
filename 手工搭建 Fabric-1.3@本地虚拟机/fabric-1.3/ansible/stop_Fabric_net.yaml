@@ -1,0 +1,9 @@
+# 关闭 peer
+- import_playbook: ./peer/1_4_1_stop_peer.yaml
+# 关闭 couchdb
+- import_playbook: ./peer/1_3_1_stop_couchdb.yaml
+# 关闭 order
+- import_playbook: ./orderer/1_2_1_stop_orderer.yaml
+# 关闭 kafka 
+- import_playbook: ./kafka/1_1_1_stop_kafaka.yaml
+

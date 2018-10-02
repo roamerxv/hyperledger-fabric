@@ -1,0 +1,10 @@
+# 关闭 所有服务
+- import_playbook: stop_Fabric_net.yaml
+
+
+# 清理所有数据
+- import_playbook: clean_Fabric_net_data.yaml
+
+# 启动 所有服务
+- import_playbook: start_Fabric_net.yaml
+
