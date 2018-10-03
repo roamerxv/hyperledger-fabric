@@ -1,0 +1,18 @@
+- hosts: cli  
+  vars:
+    FABRIC_DEPLOY_ROOT: /root/fabric/fabric-deploy
+    CHANNEL_NAME: mychannel
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  " peer0.org1.alcor.com 加入到 {{ CHANNEL_NAME }}中"
+    shell: "{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/peer.sh channel join -b {{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/{{ CHANNEL_NAME }}.block"
+
+  - name:  " peer1.org1.alcor.com 加入到 {{ CHANNEL_NAME }}中"
+    shell: "{{ FABRIC_DEPLOY_ROOT }}/users/User1@org1.alcor.com/peer.sh channel join -b {{ FABRIC_DEPLOY_ROOT }}/users/User1@org1.alcor.com/{{ CHANNEL_NAME }}.block"
+
+  - name:  " peer0.org2.alcor.com 加入到 {{ CHANNEL_NAME }}中"
+    shell: "{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org2.alcor.com/peer.sh channel join -b {{ FABRIC_DEPLOY_ROOT }}/users/Admin@org2.alcor.com/{{ CHANNEL_NAME }}.block"
+
+  - name:  " peer1.org2.alcor.com 加入到 {{ CHANNEL_NAME }}中"
+    shell: "{{ FABRIC_DEPLOY_ROOT }}/users/User1@org2.alcor.com/peer.sh channel join -b {{ FABRIC_DEPLOY_ROOT }}/users/User1@org2.alcor.com/{{ CHANNEL_NAME }}.block"

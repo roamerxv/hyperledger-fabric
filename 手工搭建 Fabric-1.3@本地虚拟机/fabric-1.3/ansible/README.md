@@ -1,1 +1,1 @@
-ansible-playboo test.yaml
+通过 ansible 进行 fabric 1.3 环境的运维

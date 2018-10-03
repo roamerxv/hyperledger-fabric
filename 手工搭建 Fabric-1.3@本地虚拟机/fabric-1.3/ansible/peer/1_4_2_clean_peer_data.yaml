@@ -5,5 +5,5 @@
   tasks:
   - name:  "删除 peer 的数据"   
     file:
-        path: /opt/fabric/peer/data
+        path:  /var/hyperledger/production
         state: absent

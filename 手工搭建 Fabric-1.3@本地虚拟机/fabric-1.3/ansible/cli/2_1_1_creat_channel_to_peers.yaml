@@ -1,0 +1,21 @@
+- hosts: cli  
+  vars:
+    FABRIC_DEPLOY_ROOT: /root/fabric/fabric-deploy
+    CHANNEL_NAME: mychannel
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "创立 channel ， 名字叫 mychannel"
+    shell:  '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/peer.sh channel create -o orderer.alcor.com:7050 -c {{ CHANNEL_NAME }} -f {{ FABRIC_DEPLOY_ROOT }}/{{ CHANNEL_NAME }}.tx --tls true --cafile {{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/tlsca.alcor.com-cert.pem'
+  - name:  "复制 channel 文件到 User1@org1.alco.rom 节点上"
+    copy:
+        src: '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/{{ CHANNEL_NAME }}.block'
+        dest: '{{ FABRIC_DEPLOY_ROOT }}/users/User1@org1.alcor.com'
+  - name:  "复制 channel 文件到 Admin@org2.alco.rom 节点上"
+    copy:
+        src: '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/{{ CHANNEL_NAME }}.block'
+        dest: '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org2.alcor.com'
+  - name:  "复制 channel 文件到 User1@org2.alco.rom 节点上"
+    copy:
+        src: '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/{{ CHANNEL_NAME }}.block'
+        dest: '{{ FABRIC_DEPLOY_ROOT }}/users/User1@org2.alcor.com'

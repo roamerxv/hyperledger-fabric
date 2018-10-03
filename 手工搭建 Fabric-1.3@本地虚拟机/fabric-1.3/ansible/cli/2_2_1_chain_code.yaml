@@ -1,0 +1,35 @@
+- hosts: cli  
+  vars:
+    FABRIC_DEPLOY_ROOT: /root/fabric/fabric-deploy
+    CHANNEL_NAME: mychannel
+    CC_NAME: demo
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "通过 Admin@peer0.alcor.com 对 chaincode {{ CC_NAME }}打包"
+    command:  '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/peer.sh chaincode package {{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/{{ CC_NAME }}-pack.out -n {{ CC_NAME }} -v 0.0.1 -s -S -p github.com/roamerxv/chaincode/fabric/examples/go/demo'
+    args:
+      chdir: '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com'
+  
+#  - name:  "通过 Admin@peer0.alcor.com 对 chaincode {{ CC_NAME }}签名"
+#    shell:  '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/peer.sh chaincode signpackage {{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/{{ CC_NAME }}-pack.out {{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/signed-{{ CC_NAME }}-pack.out'
+
+#  - name:  "通过 Admin@peer0.alcor.com 对 chaincode {{ CC_NAME }}安装"
+#    shell:  '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/peer.sh chaincode install {{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/signed-{{ CC_NAME }}-pack.out'
+  
+  
+
+#  - name:  "复制 chaincode {{ CC_NAME }} 文件到 User1@org1.alco.rom 节点上"
+#    copy:
+#        src: '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/signed-{{ CC_NAME }}-pack.out'
+#        dest: '{{ FABRIC_DEPLOY_ROOT }}/users/User1@org1.alcor.com'
+
+#  - name:  "复制 chaincode {{ CC_NAME }} 文件到 Admin@org2.alco.rom 节点上"
+#    copy:
+#        src: '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/signed-{{ CC_NAME }}-pack.out'
+#        dest: '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org2.alcor.com'
+
+#  - name:  "复制 chaincode {{ CC_NAME }} 文件到 User1@org2.alco.rom 节点上"
+#    copy:
+#        src: '{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/signed-{{ CC_NAME }}-pack.out'
+#        dest: '{{ FABRIC_DEPLOY_ROOT }}/users/User1@org2.alcor.com'

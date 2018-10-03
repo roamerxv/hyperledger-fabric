@@ -3,6 +3,6 @@
 # 清理 orderer 数据
 - import_playbook: ./orderer/1_2_2_clean_orderer_data.yaml
 # 清理 couchdb 数据
-- import_playbook: ./orderer/1_3_2_clean_couchdb_data.yaml
+- import_playbook: ./peer/1_3_2_clean_couchdb_data.yaml
 # 清理 peer 数据（启用 couchdb 的时候没有数据文件）
 - import_playbook: ./peer/1_4_2_clean_peer_data.yaml

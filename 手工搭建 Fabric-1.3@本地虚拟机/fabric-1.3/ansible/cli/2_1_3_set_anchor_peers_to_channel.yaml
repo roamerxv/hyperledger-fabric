@@ -1,0 +1,11 @@
+- hosts: cli  
+  vars:
+    FABRIC_DEPLOY_ROOT: /root/fabric/fabric-deploy
+    CHANNEL_NAME: mychannel
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  " 把 org1的 anchor peer 设置为 peer0.org1.alcor.com "
+    shell: "{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/peer.sh channel update -o orderer.alcor.com:7050 -c {{ CHANNEL_NAME }} -f {{ FABRIC_DEPLOY_ROOT }}/Org1MSPanchors.tx --tls true --cafile {{ FABRIC_DEPLOY_ROOT }}/users/Admin@org1.alcor.com/tlsca.alcor.com-cert.pem"
+  - name:  " 把 org2的 anchor peer 设置为 peer0.org2.alcor.com "
+    shell: "{{ FABRIC_DEPLOY_ROOT }}/users/Admin@org2.alcor.com/peer.sh channel update -o orderer.alcor.com:7050 -c {{ CHANNEL_NAME }} -f {{ FABRIC_DEPLOY_ROOT }}/Org2MSPanchors.tx --tls true --cafile {{ FABRIC_DEPLOY_ROOT }}/users/Admin@org2.alcor.com/tlsca.alcor.com-cert.pem"
