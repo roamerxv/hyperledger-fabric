@@ -1,0 +1,6 @@
+# 启动 kafka
+- import_playbook: ./kafka/0_1_1_reboot.yaml
+# 启动 orderer
+- import_playbook: ./orderer/0_1_1_reboot.yaml
+# 启动 couchd
+- import_playbook: ./peer/0_1_1_reboot.yaml

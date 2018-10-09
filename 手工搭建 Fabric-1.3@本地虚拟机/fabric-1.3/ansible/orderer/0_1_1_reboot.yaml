@@ -1,0 +1,9 @@
+- hosts: orderer  
+  vars:
+    kafka_dodcker_composer_file:  /root/kafka/docker-compose.yaml
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "reboot orderer 主机"
+    reboot:
+        msg: "System will reboot by ansible"
