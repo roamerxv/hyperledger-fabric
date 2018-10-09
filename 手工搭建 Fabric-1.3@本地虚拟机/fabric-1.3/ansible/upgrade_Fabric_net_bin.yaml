@@ -1,0 +1,23 @@
+- hosts: cli  
+  vars:
+    FABRIC_DEPLOY_ROOT: /root/fabric/fabric-deploy
+    PEER_BIN: /opt/fabric/peer
+    ORDERER_BIN: /opt/fabric/orderer
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "更新 orderer 主机中的 orderer 执行程序"
+    shell:  'scp -r /root/fabric/fabric-deploy/bin/orderer root@orderer.alcor.com:{{ ORDERER_BIN }}'
+
+  - name:  "更新 peer0.org1.alcor.com 中的 peer 执行程序 "
+    shell:  'scp -r /root/fabric/fabric-deploy/bin/peer root@peer0.org1.alcor.com:{{ PEER_BIN }}'
+
+  - name:  "更新 peer1.org1.alcor.com 中的 peer 执行程序"
+    shell:  'scp -r /root/fabric/fabric-deploy/bin/peer root@peer1.org1.alcor.com:{{ PEER_BIN }}'
+
+  - name:  "更新 peer0.org2.alcor.com 中的 peer 执行程序 "
+    shell:  'scp -r /root/fabric/fabric-deploy/bin/peer root@peer0.org2.alcor.com:{{ PEER_BIN }}'
+
+  - name:  "更新 peer1.org2.alcor.com 中的 peer 执行程序"
+    shell:  'scp -r /root/fabric/fabric-deploy/bin/peer root@peer1.org2.alcor.com:{{ PEER_BIN }}'
+  

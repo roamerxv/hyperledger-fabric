@@ -1,0 +1,75 @@
+{
+  "network-configs": {
+    "dev": {
+      "version": "1.0",
+      "clients": {
+        "client": {
+          "tlsEnable": true,
+          "organization": "Org1MSP",
+          "channel": "mychannel",
+          "credentialStore": {
+            "path": "./tmp/credentialStore_Org1/credential",
+            "cryptoStore": {
+              "path": "./tmp/credentialStore_Org1/crypto"
+            }
+          }
+        }
+      },
+      "channels": {
+        "mychannel": {
+          "peers": {
+            "peer0.org1.yx.com": {}
+          },
+          "connection": {
+            "timeout": {
+              "peer": {
+                "endorser": "6000",
+                "eventHub": "6000",
+                "eventReg": "6000"
+              }
+            }
+          }
+        }
+      },
+      "organizations": {
+        "Org1MSP": {
+          "mspid": "Org1MSP",
+          "fullpath": false,
+          "adminPrivateKey": {
+            "path": 
+              "/root/blockchain-explorer/examples/dockerConfig/crypto/peerOrganizations/org1.yx.com/users/Admin@org1.yx.com/msp/keystore"
+          },
+          "signedCert": {
+            "path": 
+              "/root/blockchain-explorer/examples/dockerConfig/crypto/peerOrganizations/org1.yx.com/users/Admin@org1.yx.com/msp/signcerts"
+          }
+        },
+        "OrdererMSP": {
+          "mspid": "OrdererMSP",
+          "adminPrivateKey": {
+            "path": "/root/blockchain-explorer/examples/dockerConfig/crypto/ordererOrganizations/yx.com/users/Admin@yx.com/msp/keystore"
+          }
+        }
+      },
+      "peers": {
+        "peer0.org1.yx.com": {
+          "tlsCACerts": {
+            "path": "/root/blockchain-explorer/examples/dockerConfig/crypto/peerOrganizations/org1.yx.com/peers/peer0.org1.yx.com/tls/ca.crt"
+          },
+          "url": "grpcs://peer0.org1.yx.com:7051",
+          "eventUrl": "grpcs://peer0.org1.yx.com:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer0.org1.yx.com"
+          }
+        }
+      },
+      "orderers": {
+        "orderer.yx.com": {
+          "url": "grpcs://orderer.yx.com:7050"
+        }
+      }
+    },
+    "configtxgenToolPath": "/root/blockchain-explorer/bin",
+    "license": "Apache-2.0"
+  }
+}

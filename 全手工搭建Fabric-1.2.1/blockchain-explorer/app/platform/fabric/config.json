@@ -48,6 +48,10 @@
           "mspid": "OrdererMSP",
           "adminPrivateKey": {
             "path": "/root/blockchain-explorer/examples/dockerConfig/crypto/ordererOrganizations/yx.com/users/Admin@yx.com/msp/keystore"
+          },
+          "signedCert": {
+            "path":
+              "/root/blockchain-explorer/examples/dockerConfig/crypto/ordererOrganizations/yx.com/users/Admin@yx.com/msp/signcerts"
           }
         }
       },

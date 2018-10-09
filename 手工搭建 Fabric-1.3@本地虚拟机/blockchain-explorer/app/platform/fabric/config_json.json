@@ -1,0 +1,73 @@
+{
+  "network-configs": {
+    "dev": {
+      "version": "1.0",
+      "clients": {
+        "client": {
+          "tlsEnable": false,
+          "organization": "peers.member1.example.com",
+          "channel": "mychannel",
+          "credentialStore": {
+            "path": "./tmp/credentialStore_Org1/credential",
+            "cryptoStore": {
+              "path": "./tmp/credentialStore_Org1/crypto"
+            }
+          }
+        }
+      },
+      "channels": {
+        "mychannel": {
+          "peers": {
+            "peer0.member1.example.com": {}
+          },
+          "connection": {
+            "timeout": {
+              "peer": {
+                "endorser": "60000",
+                "eventHub": "60000",
+                "eventReg": "60000"
+              }
+            }
+          }
+        }
+      },
+      "organizations": {
+        "peers.member1.example.com": {
+          "mspid": "peers.member1.example.com",
+          "fullpath": false,
+          "adminPrivateKey": {
+            "path": "/example.com/crypto-config/peerOrganizations/member1.example.com/users/Admin@member1.example.com/msp/keystore"
+          },
+          "signedCert": {
+            "path": "/example.com/crypto-config/peerOrganizations/member1.example.com/users/Admin@member1.example.com/msp/signcerts"
+          }
+        },
+        "orderers.member1.example.com": {
+          "mspid": "orderers.member1.example.com",
+          "adminPrivateKey": {
+            "path": "/example.com/crypto-config/ordererOrganizations/member1.example.com/users/Admin@member1.example.com/msp/keystore"
+          }
+        }
+      },
+      "peers": {
+        "peer0.member1.example.com": {
+          "tlsCACerts": {
+            "path": "/example.com/crypto-config/peerOrganizations/member1.example.com/peers/peer0.member1.example.com/tls/ca.crt"
+          },
+          "url": "grpc://peer0.member1.example.com:7051",
+          "eventUrl": "grpc://peer0.member1.example.com:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer0.org1.example.com"
+          }
+        }
+      },
+      "orderers": {
+        "orderer0.member1.example.com": {
+          "url": "grpc://orderer0.member1.example.com:7050"
+        }
+      }
+    }
+  },
+  "configtxgenToolPath": "/example.com/bin",
+  "license": "Apache-2.0"
+}

@@ -1,0 +1,115 @@
+{
+  "network-configs": {
+    "network-1": {
+      "version": "1.0",
+      "clients": {
+        "client-1": {
+          "tlsEnable": true,
+          "organization": "Org1",
+          "channel": "cechannel",
+          "credentialStore": {
+            "path": "./tmp/credentialStore_Org1/credential",
+            "cryptoStore": {
+              "path": "./tmp/credentialStore_Org1/crypto"
+            }
+          }
+        },
+        "client-2": {
+          "tlsEnable": true,
+          "organization": "Org2",
+          "channel": "cechannel",
+          "credentialStore": {
+            "path": "./tmp/credentialStore_Org2/credential",
+            "cryptoStore": {
+              "path": "./tmp/credentialStore_Org2/crypto"
+            }
+          }
+        }
+      },
+      "channels": {
+        "cechannel": {
+          "peers": {
+            "peer0.org1.example.com": {},
+            "peer0.org2.example.com": {}
+          },
+          "connection": {
+            "timeout": {
+              "peer": {
+                "endorser": "60000",
+                "eventHub": "60000",
+                "eventReg": "60000"
+              }
+            }
+          }
+        }
+      },
+      "organizations": {
+        "Org1": {
+          "mspid": "Org1MSP",
+          "fullpath": false,
+          "adminPrivateKey": {
+            "path":
+              "/home/test/fabric-deploy/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/keystore"
+          },
+          "signedCert": {
+            "path":
+              "/home/test/fabric-deploy/crypto-config/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp/signcerts"
+          }
+        },
+        "Org2": {
+          "mspid": "Org2MSP",
+          "adminPrivateKey": {
+            "path":
+              "/home/test/fabric-deploy/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/keystore"
+          },
+          "signedCert": {
+            "path":
+              "/home/test/fabric-deploy/crypto-config/peerOrganizations/org2.example.com/users/Admin@org2.example.com/msp/signcerts"
+          }
+        },
+        "OrdererOrg": {
+          "mspid": "OrdererMSP",
+          "adminPrivateKey": {
+            "path":
+              "/home/test/fabric-deploy/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/keystore"
+          },
+          "signedCert": {
+            "path":
+              "/home/test/fabric-deploy/crypto-config/ordererOrganizations/example.com/users/Admin@example.com/msp/signcerts"
+          }
+        }
+      },
+      "peers": {
+        "peer0.org1.example.com": {
+          "tlsCACerts": {
+            "path":
+              "/home/test/fabric-deploy/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt"
+          },
+          "url": "grpcs://peer0.org1.example.com:7051",
+          "eventUrl": "grpcs://peer0.org1.example.com:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer0.org1.example.com"
+          }
+        },
+        "peer0.org2.example.com": {
+          "tlsCACerts": {
+            "path":
+              "/home/test/fabric-deploy/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/tls/ca.crt"
+          },
+          "url": "grpcs://peer0.org2.example.com:7051",
+          "eventUrl": "grpcs://peer0.org2.example.com:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer0.org2.example.com"
+          }
+        }
+      },
+      "orderers": {
+        "orderer1.example.com": {
+          "url": "grpcs://orderer1.example.com:7050"
+        }
+      }
+    }
+  },
+  "configtxgenToolPath": "/home/test/fabric-deploy/bin",
+  "license": "Apache-2.0"
+}
