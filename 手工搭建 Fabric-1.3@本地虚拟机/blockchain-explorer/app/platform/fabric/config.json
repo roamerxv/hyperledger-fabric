@@ -3,7 +3,7 @@
     "dev": {
       "version": "1.0",
       "clients": {
-        "client": {
+        "client-1": {
           "tlsEnable": true,
           "organization": "Org1MSP",
           "channel": "mychannel",
@@ -18,7 +18,10 @@
       "channels": {
         "mychannel": {
           "peers": {
-            "peer0.org1.alcor.com": {}
+            "peer0.org1.alcor.com":{},
+            "peer1.org1.alcor.com":{},
+            "peer0.org2.alcor.com":{},
+            "peer1.org2.alcor.com":{}
           },
           "connection": {
             "timeout": {
@@ -37,42 +40,84 @@
           "fullpath": false,
           "adminPrivateKey": {
             "path": 
-              "/root/blockchain-explorer/examples/dockerConfig/crypto/peerOrganizations/org1.alcor.com/users/Admin@org1.alcor.com/msp/keystore"
+              "/root/certs/peerOrganizations/org1.alcor.com/users/Admin@org1.alcor.com/msp/keystore"
           },
           "signedCert": {
             "path": 
-              "/root/blockchain-explorer/examples/dockerConfig/crypto/peerOrganizations/org1.alcor.com/users/Admin@org1.alcor.com/msp/signcerts"
+              "/root/certs/peerOrganizations/org1.alcor.com/users/Admin@org1.alcor.com/msp/signcerts"
+          }
+        },
+        "Org2MSP": {
+          "mspid": "Org2MSP",
+          "fullpath": false,
+          "adminPrivateKey": {
+            "path": 
+              "/root/certs/peerOrganizations/org2.alcor.com/users/Admin@org2.alcor.com/msp/keystore"
+          },
+          "signedCert": {
+            "path": 
+              "/root/certs/peerOrganizations/org2.alcor.com/users/Admin@org2.alcor.com/msp/signcerts"
           }
         },
         "OrdererMSP": {
           "mspid": "OrdererMSP",
           "adminPrivateKey": {
-            "path": "/root/blockchain-explorer/examples/dockerConfig/crypto/ordererOrganizations/alcor.com/users/Admin@alcor.com/msp/keystore"
+            "path": "/root/certs/ordererOrganizations/alcor.com/users/Admin@alcor.com/msp/keystore"
           },
           "signedCert": {
-            "path": "/root/blockchain-explorer/examples/dockerConfig/crypto/ordererOrganizations/alcor.com/users/Admin@alcor.com/msp/signcerts"
+            "path": "/root/certs/ordererOrganizations/alcor.com/users/Admin@alcor.com/msp/signcerts"
           }
         }
       },
       "peers": {
         "peer0.org1.alcor.com": {
           "tlsCACerts": {
-            "path": "/root/blockchain-explorer/examples/dockerConfig/crypto/peerOrganizations/org1.alcor.com/peers/peer0.org1.alcor.com/tls/ca.crt"
+            "path": "/root/certs/peerOrganizations/org1.alcor.com/peers/peer0.org1.alcor.com/tls/ca.crt"
           },
           "url": "grpcs://peer0.org1.alcor.com:7051",
           "eventUrl": "grpcs://peer0.org1.alcor.com:7053",
           "grpcOptions": {
             "ssl-target-name-override": "peer0.org1.alcor.com"
           }
-        }
+        },
+        "peer1.org1.alcor.com": {
+          "tlsCACerts": {
+            "path": "/root/certs/peerOrganizations/org1.alcor.com/peers/peer1.org1.alcor.com/tls/ca.crt"
+          },
+          "url": "grpcs://peer1.org1.alcor.com:7051",
+          "eventUrl": "grpcs://peer1.org1.alcor.com:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer1.org1.alcor.com"
+          }
+        },
+        "peer0.org2.alcor.com": {
+          "tlsCACerts": {
+            "path": "/root/certs/peerOrganizations/org2.alcor.com/peers/peer0.org2.alcor.com/tls/ca.crt"
+          },
+          "url": "grpcs://peer0.org2.alcor.com:7051",
+          "eventUrl": "grpcs://peer0.org2.alcor.com:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer0.org2.alcor.com"
+          }
+        },
+        "peer1.org2.alcor.com": {
+          "tlsCACerts": {
+            "path": "/root/certs/peerOrganizations/org2.alcor.com/peers/peer1.org2.alcor.com/tls/ca.crt"
+          },
+          "url": "grpcs://peer1.org2.alcor.com:7051",
+          "eventUrl": "grpcs://peer1.org2.alcor.com:7053",
+          "grpcOptions": {
+            "ssl-target-name-override": "peer1.org2.alcor.com"
+          }
+        }        
       },
       "orderers": {
         "orderer.alcor.com": {
           "url": "grpcs://orderer.alcor.com:7050"
         }
       }
-    },
-    "configtxgenToolPath": "/root/blockchain-explorer/bin",
-    "license": "Apache-2.0"
-  }
+    }
+  },
+  "configtxgenToolPath": "/root/bin",
+  "license": "Apache-2.0"
 }

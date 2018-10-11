@@ -1,0 +1,12 @@
+- hosts: kafka  
+  vars:
+    kafka_dodcker_composer_file:  /root/kafka/docker-compose.yaml
+  remote_user: root
+  gather_facts: no
+  
+  tasks:
+    - name: shutdown
+      command: /sbin/shutdown +1
+      async: 0
+      poll: 0
+      ignore_errors: yes    

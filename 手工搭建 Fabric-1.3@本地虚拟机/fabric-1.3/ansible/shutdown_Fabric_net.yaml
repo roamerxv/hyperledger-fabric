@@ -1,0 +1,8 @@
+# 关闭 peers
+- import_playbook: ./peer/0_2_1_shutdown.yaml
+
+# 关闭 orderer
+- import_playbook: ./orderer/0_2_1_shutdown.yaml
+
+# 关闭 kafka
+- import_playbook: ./kafka/0_2_1_shutdown.yaml
