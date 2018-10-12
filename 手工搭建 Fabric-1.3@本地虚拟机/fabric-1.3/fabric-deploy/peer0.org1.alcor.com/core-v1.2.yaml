@@ -176,7 +176,7 @@ chaincode:
         runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASE_VERSION)
     java:
         Dockerfile:  |
-            from $(DOCKER_NS)/fabric-javaenv:$(ARCH)-1.1.0
+            from $(DOCKER_NS)/fabric-javaenv:$(ARCH)-$(BASE_VERSION)
     node:
         runtime: $(BASE_DOCKER_NS)/fabric-baseimage:$(ARCH)-$(BASE_VERSION)
     startuptimeout: 300s
@@ -191,32 +191,33 @@ chaincode:
         qscc: enable
     systemPlugins:
     logging:
-      level:  info
-      shim:   warning
-      format: '%{color}%{time:2006-01-02 15:04:05.000 MST} [%{module}] %{shortfunc} -> %{level:.4s} %{id:03x}%{color:reset} %{message}'
+        level:  info
+        shim:   warning
+        format: '%{color}%{time:2006-01-02 15:04:05.000 MST} [%{module}] %{shortfunc} -> %{level:.4s} %{id:03x}%{color:reset} %{message}'
 ledger:
-  blockchain:
-  state:
-    stateDatabase: CouchDB     #goleveldb
-    couchDBConfig:
-       couchDBAddress: 127.0.0.1:5984
-       username:        admin
-       password:        password
-       maxRetries: 3
-       maxRetriesOnStartup: 10
-       requestTimeout: 35s
-       queryLimit: 10000
-       maxBatchUpdateSize: 1000
-       warmIndexesAfterNBlocks: 1
-  history:
-    enableHistoryDatabase: true
+    blockchain:
+    state:
+        stateDatabase: CouchDB     #goleveldb
+        couchDBConfig:
+            couchDBAddress: 127.0.0.1:5984
+            username:        admin
+            password:        password
+            maxRetries: 3
+            maxRetriesOnStartup: 10
+            requestTimeout: 35s
+            queryLimit: 10000
+            maxBatchUpdateSize: 1000
+            warmIndexesAfterNBlocks: 1
+    history:
+        enableHistoryDatabase: true
+
 metrics:
-        enabled: false
-        reporter: statsd
-        interval: 1s
-        statsdReporter:
-              address: 0.0.0.0:8125
-              flushInterval: 2s
-              flushBytes: 1432
+    enabled: false
+    reporter: statsd
+    interval: 1s
+    statsdReporter:
+        address: 0.0.0.0:8125
+        flushInterval: 2
+        flushBytes: 1432
     promReporter:
-          listenAddress: 0.0.0.0:8080
+        listenAddress: 0.0.0.0:8080
