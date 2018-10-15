@@ -4,4 +4,4 @@
   gather_facts: no
   tasks:
     - name: 启动 peer 进程
-      shell: "nohup /opt/fabric/peer/startPeer.sh &"
+      shell: "/etc/init.d/autoRunPeer.sh"
