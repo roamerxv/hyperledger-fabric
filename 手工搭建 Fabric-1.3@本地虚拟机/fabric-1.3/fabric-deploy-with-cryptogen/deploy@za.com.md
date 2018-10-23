@@ -601,7 +601,7 @@ mkdir -p /root/fabric/fabric-deploy/peer1.org1.za.com
 cd /root/fabric/fabric-deploy
 cp bin/peer     peer1.org1.za.com/
 cp -rf certs/peerOrganizations/org1.za.com/peers/peer1.org1.za.com/* peer1.org1.za.com/
-    ```
+```
         
 ##### b. 最后修改peer1.org1.za.com/core.yml，将其中的peer0.org1.za.com修改为peer1.org1.za.com，这里直接用sed命令替换:
         
@@ -1461,10 +1461,10 @@ cd /home/fabric/fabric-deploy/users/Admin@org1.za.com
     
  更新后，直接调用新合约。 `调用的时候，不需要指定版本号，直接会调用最新版本的 CC`
  
- ```bash
-  ./peer.sh chaincode invoke -o orderer.za.com:7050  --tls true --cafile /root/fabric/fabric-deploy/certs/ordererOrganizations/za.com/tlsca/tlsca.za.com-cert.pem  -C mychannel -n demo  -c '{"Args":["write","key1","徐泽宇&徐芷攸"]}'
-   ./peer.sh chaincode query -C mychannel -n demo -c '{"Args":["query","key1"]}'
- ```
+```bash
+./peer.sh chaincode invoke -o orderer.za.com:7050  --tls true --cafile /root/fabric/fabric-deploy/certs/ordererOrganizations/za.com/tlsca/tlsca.za.com-cert.pem  -C mychannel -n demo  -c '{"Args":["write","key1","徐泽宇&徐芷攸"]}'
+./peer.sh chaincode query -C mychannel -n demo -c '{"Args":["query","key1"]}'
+```
     
 #### 7. 查询key的历史记录
 
@@ -1472,50 +1472,60 @@ cd /home/fabric/fabric-deploy/users/Admin@org1.za.com
 ./peer.sh chaincode query -C mychannel -n demo -c '{"Args":["history","key1"]}'
 ```
 
-### 十八. java 版本的 chaincode 的安装和部署（在 cli 主机上操作）（未完成，待修改。。。）
+### 十八. java 版本的 chaincode 的安装和部署
 
-#### 1. 在 cli 主机上拉取 java chaincode 的代码, 需要安装 `java` 和 `gradle`
+#### 1. 在 cli 主机上拉取 java chaincode 的代码(需要安装java 和 gradle)
 
 ```bash
-cd /root
-git clone  https://github.com/hyperledger/fabric-chaincode-java
-#安装 java 和 gradle(略过)
-```
-    
-#### 2. gradle 编译 chaincode 的支持包(`Build java shim jars (proto and shim jars) and install them to local maven repository.`),好像需要 翻墙（gradle 指定 proxy的方法是在 gradle 命令后面跟-D参数：  -Dhttp.proxyHost=192.168.2.11 -Dhttp.proxyPort=8016）。参考文档是 fabric-chaincode-java目录下的 FAQ.md
-    
-    
-```bash
-cd /root/fabric-chaincode-java/
-
-gradle clean build install -x test -Dhttp.proxyHost=192.168.2.11 -Dhttp.proxyPort=8016
-    
-```
-
-#### 3.编译 chaincode
-    
-```bash
-cd /root/fabric-chaincode-java/fabric-chaincode-example-gradle
-gradle clean build shadowJar -x test -Dhttp.proxyHost=192.168.2.11 -Dhttp.proxyPort=8016
-#生成的 jar 文件位于    ./build/libs  目录下的 chaincode.jar
-    
 cd /root/fabric-chaincode-java
-gradle buildImage -Dhttp.proxyHost=192.168.2.11 -Dhttp.proxyPort=8016
+git clone https://github.com/hyperledger/fabric-samples.git
+cd /root/fabric-chaincode-java/fabric-samples/chaincode/chaincode_example02/java
+gradle build
 ```
 
-#### 4.安装 chaincode
+#### 2.安装 chaincode
+
+在 cli 上的 Admin@org1.za.com 主机上安装 java chaincode
 
 ```bash
 cd /root/fabric/fabric-deploy/users/Admin@org1.za.com
-./peer.sh chaincode install -l java  -n mycc -v 1.0.0 -p /root/fabric-chaincode-java/fabric-chaincode-example-gradle
+
+./peer.sh chaincode install -l java  -n mycc -v 1.0.0 -p /root/fabric-chaincode-java/fabric-samples/chaincode/chaincode_example02/java
+
+#同时安装到其他几个 peer 上
+cd /root/fabric/fabric-deploy/users/User1@org1.za.com
+cd /root/fabric/fabric-deploy/users/Admin@org2.za.com
+cd /root/fabric/fabric-deploy/users/User1@org2.za.com
+
+./peer.sh chaincode install -l java  -n mycc -v 1.0.0 -p /root/fabric-chaincode-java/fabric-samples/chaincode/chaincode_example02/java
 ```
     
-#### 5.  实例化chaincode 
+#### 3. 实例化chaincode 
+
+在 peer0.org.aclcor.com 主机上会产生一个 docker 容器
+```bash
+cd /root/fabric/fabric-deploy/users/Admin@org1.za.com
+
+./peer.sh chaincode instantiate -o orderer.za.com:7050 --tls true --cafile /root/fabric/fabric-deploy/certs/ordererOrganizations/za.com/tlsca/tlsca.za.com-cert.pem -C mychannel -n mycc -v 1.0.0 -c  '{"Args":["init","roamer","100","dly","200"]}' -P "OR('Org1MSP.member','Org2MSP.member')"
+```
+
+#### 4.调用 chaincode（做一笔转账）
 
 ```bash
-./peer.sh chaincode instantiate -o orderer.za.com:7050 --tls true --cafile /root/fabric/fabric-deploy/certs/ordererOrganizations/za.com/tlsca/tlsca.za.com-cert.pem -C mychannel -n mycc -v 1.0.0 -c  '{"Args":["init","roamer","100","dly","200"]}' -P "OR('Org1MSP.member','Org2MSP.member')"
+cd /root/fabric/fabric-deploy/users/Admin@org1.za.com
 
+./peer.sh chaincode invoke -o orderer.za.com:7050  --tls true --cafile /root/fabric/fabric-deploy/certs/ordererOrganizations/za.com/tlsca/tlsca.za.com-cert.pem  -C mychannel -n mycc  -c '{"Args":["invoke","roamer","dly","20"]}' 
 ```
+
+#### 4.查询chaincode（查一个账户信息）
+
+```bash
+cd /root/fabric/fabric-deploy/users/Admin@org1.za.com
+
+./peer.sh chaincode query  -C mychannel  -n mycc -c '{"Args":["query","roamer"]}'
+```
+
+#### 4.在其他几个 peer 上进行安装和调用（略）
 
 `踩坑`：
 * 下载 image  ： hyperledger/fabric-javaenv:amd64-1.3.0 不存在。
@@ -1524,7 +1534,7 @@ cd /root/fabric/fabric-deploy/users/Admin@org1.za.com
 ```yaml
 java:
     #runtime: $(DOCKER_NS)/fabric-javaenv:$(ARCH)-$(PROJECT_VERSION)
-    runtime: $(DOCKER_NS)/fabric-javaenv:$(ARCH)-1.3.0-rc1
+    runtime: $(DOCKER_NS)/fabric-javaenv:1.3.0
 ```
     
 kill 掉原来的 peer 进程，再启动 peer 。在 cli 上重新 instance CC 。peer 节点上会自动 pull image。如果不重启 peer，core.yaml 不会起作用,一直报同样的错误。
@@ -1649,7 +1659,7 @@ fabric-ca-client enroll -u http://admin:password@localhost:7054 -H /root/fabric-
 可以通过下面命令进行查看
     
 ```bash
-$ fabric-ca-client  -H /root/fabric-ca-files/admin  affiliation list
+fabric-ca-client  -H /root/fabric-ca-files/admin  affiliation list
     
 affiliation: .
    affiliation: org2
@@ -1677,22 +1687,24 @@ fabric-ca-client  -H  /root/fabric-ca-files/admin  affiliation add com.za.org2
 #####  e. 查看刚刚建立的联盟
 
 ```bash
-$ fabric-ca-client  -H /root/fabric-ca-files/admin  affiliation list
+fabric-ca-client  -H /root/fabric-ca-files/admin  affiliation list
 ```
 
 #####  f. 为各个组织生成凭证（MSP），就是从Fabric-CA中，读取出用来签署用户的根证书等
-        
+
+######  1)为 za.com 获取证书        
+
 ```bash
-mkdir -p  /root/fabric-ca-files/Organizations/za.com/msp
+fabric-ca-client getcacert -M /root/fabric-ca-files/Organizations/za.com/msp
 ```
     
-######  1)为 org1.za.com 获取证书
+######  2)为 org1.za.com 获取证书
     
 ```bash
 fabric-ca-client getcacert -M /root/fabric-ca-files/Organizations/org1.za.com/msp
 ```
 
-######  2)为 org2.za.com 获取证书
+######  3)为 org2.za.com 获取证书
     
 ```bash
 fabric-ca-client getcacert -M /root/fabric-ca-files/Organizations/org2.za.com/msp
@@ -1702,7 +1714,7 @@ fabric-ca-client getcacert -M /root/fabric-ca-files/Organizations/org2.za.com/ms
 
 `在1.3.0版本的fabric-ca中，只会生成用户在操作区块链的时候用到的证书和密钥，不会生成用来加密grpc通信的证书。`
 
-######  3)这里复用之前在 cli 主机上用 cryptogen 生成的tls证书，需要将验证tls证书的ca添加到msp目录中，如下：
+######  4)这里复用之前在 cli 主机上用 cryptogen 生成的tls证书，需要将验证tls证书的ca添加到msp目录中，如下：
     
 ```bash
 scp -r root@cli.za.com:/root/fabric/fabric-deploy/certs/ordererOrganizations/za.com/msp/tlscacerts /root/fabric-ca-files/Organizations/za.com/msp/
@@ -1848,7 +1860,7 @@ fabric-ca-client register -H /root/fabric-ca-files/admin \
 1. 修改 /root/fabric-ca-files/admin/fabric-ca-client-config.yaml 中的 id 部分。
 `可以使用其他的fabric-ca-client-config.yaml文件，没有必须使用这个ca 的 admin 下面的fabric-ca-client-config.yaml文件的必然要求`
 
- ```bash
+    ```bash
     vim /root/fabric-ca-files/admin/fabric-ca-client-config.yaml
     ```
     修改内容为
@@ -1911,7 +1923,7 @@ fabric-ca-client register -H /root/fabric-ca-files/admin \
 1. 修改 /root/fabric-ca-files/admin/fabric-ca-client-config.yaml 中的 id 部分。
 `可以使用其他的fabric-ca-client-config.yaml文件，没有必须使用这个ca 的 admin 下面的fabric-ca-client-config.yaml文件的必然要求`
 
- ```bash
+    ```bash
     vim /root/fabric-ca-files/admin/fabric-ca-client-config.yaml
     ```
     修改内容为
@@ -2007,8 +2019,8 @@ fabric-ca-client register -H /root/fabric-ca-files/admin \
     ```bash
     # 建立 orderer 下的 admincerts 目录
     mkdir /root/fabric-ca-files/Organizations/za.com/orderer/msp/admincerts
-   # 复制 Admin@za.com 的证书到  orderer 的 msp/admincerts 目录下
-   cp /root/fabric-ca-files/Organizations/za.com/admin/msp/signcerts/cert.pem /root/fabric-ca-files/Organizations/za.com/orderer/msp/admincerts/
+    # 复制 Admin@za.com 的证书到  orderer 的 msp/admincerts 目录下
+    cp /root/fabric-ca-files/Organizations/za.com/admin/msp/signcerts/cert.pem /root/fabric-ca-files/Organizations/za.com/orderer/msp/admincerts/
 
     ```
 
@@ -2054,8 +2066,8 @@ fabric-ca-client register -H /root/fabric-ca-files/admin \
     ```bash
     # 建立 peer0 下的 admincerts 目录
     mkdir /root/fabric-ca-files/Organizations/org1.za.com/peer0/msp/admincerts
-   # 复制 Admin@org1.za.com 的证书到  peer0 的 msp/admincerts 目录下
-   cp /root/fabric-ca-files/Organizations/org1.za.com/admin/msp/signcerts/cert.pem /root/fabric-ca-files/Organizations/org1.za.com/peer0/msp/admincerts/
+    # 复制 Admin@org1.za.com 的证书到  peer0 的 msp/admincerts 目录下
+    cp /root/fabric-ca-files/Organizations/org1.za.com/admin/msp/signcerts/cert.pem /root/fabric-ca-files/Organizations/org1.za.com/peer0/msp/admincerts/
 
     ```
 
@@ -2098,8 +2110,8 @@ fabric-ca-client register -H /root/fabric-ca-files/admin \
     ```bash
     # 建立 peer1 下的 admincerts 目录
     mkdir /root/fabric-ca-files/Organizations/org1.za.com/peer1/msp/admincerts
-   # 复制 Admin@org1.za.com 的证书到  peer1 的 msp/admincerts 目录下
-   cp /root/fabric-ca-files/Organizations/org1.za.com/admin/msp/signcerts/cert.pem /root/fabric-ca-files/Organizations/org1.za.com/peer1/msp/admincerts/
+    # 复制 Admin@org1.za.com 的证书到  peer1 的 msp/admincerts 目录下
+    cp /root/fabric-ca-files/Organizations/org1.za.com/admin/msp/signcerts/cert.pem /root/fabric-ca-files/Organizations/org1.za.com/peer1/msp/admincerts/
 
     ```
 
@@ -2142,8 +2154,8 @@ fabric-ca-client register -H /root/fabric-ca-files/admin \
     ```bash
     # 建立 peer0 下的 admincerts 目录
     mkdir /root/fabric-ca-files/Organizations/org2.za.com/peer0/msp/admincerts
-   # 复制 Admin@org2.za.com 的证书到  peer0 的 msp/admincerts 目录下
-   cp /root/fabric-ca-files/Organizations/org2.za.com/admin/msp/signcerts/cert.pem /root/fabric-ca-files/Organizations/org2.za.com/peer0/msp/admincerts/
+    # 复制 Admin@org2.za.com 的证书到  peer0 的 msp/admincerts 目录下
+    cp /root/fabric-ca-files/Organizations/org2.za.com/admin/msp/signcerts/cert.pem /root/fabric-ca-files/Organizations/org2.za.com/peer0/msp/admincerts/
 
     ```
 
@@ -2186,15 +2198,712 @@ fabric-ca-client register -H /root/fabric-ca-files/admin \
     ```bash
     # 建立 peer1 下的 admincerts 目录
     mkdir /root/fabric-ca-files/Organizations/org2.za.com/peer1/msp/admincerts
-   # 复制 Admin@org2.za.com 的证书到  peer1 的 msp/admincerts 目录下
-   cp /root/fabric-ca-files/Organizations/org2.za.com/admin/msp/signcerts/cert.pem /root/fabric-ca-files/Organizations/org2.za.com/peer1/msp/admincerts/
+    # 复制 Admin@org2.za.com 的证书到  peer1 的 msp/admincerts 目录下
+    cp /root/fabric-ca-files/Organizations/org2.za.com/admin/msp/signcerts/cert.pem /root/fabric-ca-files/Organizations/org2.za.com/peer1/msp/admincerts/
 
     ```
 
+## D. 利用Fabric CA颁发的证书，部署 Fabric系统
+
+### 一. 先把fabric ca 生成的整个目录复制到 cli 主机的fabric-deploy/certs 目录下
+
+```bash
+scp -r /root/fabric-ca-files/* cli.za.com:/root/fabric/fabric-deploy/certs_by_ca
+```
+### 二.进入 cli 主机，进行后续操作
+### 三.配置genesisblock 和 orderer
+
+#### 1.生成crypto-config.yaml 文件
+
+```bash
+vim /root/fabric/fabric-deploy/crypto-config.yaml
+```
+
+```yaml
+OrdererOrgs:
+  - Name: Orderer
+    Domain: za.com
+    Specs:
+      - Hostname: orderer
+PeerOrgs:
+  - Name: Org1
+    Domain: org1.za.com
+    Template:
+      Count: 2
+    Users:
+      Count: 2
+  - Name: Org2
+    Domain: org2.za.com
+    Template:
+      Count: 2
+    Users:
+      Count: 2
+```
+#### 2.用cryptogen生成配置文件。（主要是获取tls的秘钥文件）
+
+```bash
+cd /root/fabric/fabric-deploy
+./bin/cryptogen generate --config=crypto-config.yaml --output ./certs_by_crypto
+```
+
+#### 3.配置orderer .(详细说明见A 章节)，下面只整理命令.
+
+```bash
+cd /root/fabric/fabric-deploy
+mkdir orderer.za.com
+cp ./bin/orderer ./orderer.za.com
+#复制 tls 目录(crypto生成的，fabric-ca 没法生成)
+cp -rf ./certs_by_crypto/ordererOrganizations/za.com/orderers/orderer.za.com/tls ./orderer.za.com/
+#复制 msp 目录(fabric-ca 来生成的)
+cp -rf  ./certs_by_ca/Organizations/za.com/orderer/msp orderer.za.com/
+```
 
 
-###  二. 一些常用的Fabric ca 命令
+```bash
+vi /root/fabric/fabric-deploy/orderer.za.com/orderer.yaml
+```
 
+```bash
+General:
+    LedgerType: file
+    ListenAddress: 0.0.0.0
+    ListenPort: 7050
+    TLS:
+        Enabled: true
+        PrivateKey: ./tls/server.key
+        Certificate: ./tls/server.crt
+        RootCAs:
+          - ./tls/ca.crt
+#        ClientAuthEnabled: false
+#        ClientRootCAs:
+    LogLevel: debug
+    LogFormat: '%{color}%{time:2006-01-02 15:04:05.000 MST} [%{module}] %{shortfunc} -> %{level:.4s} %{id:03x}%{color:reset} %{message}'
+#    GenesisMethod: provisional
+    GenesisMethod: file
+    GenesisProfile: SampleInsecureSolo
+    GenesisFile: ./genesisblock
+    LocalMSPDir: ./msp
+    LocalMSPID: OrdererMSP
+    Profile:
+        Enabled: false
+        Address: 0.0.0.0:6060
+    BCCSP:
+        Default: SW
+        SW:
+            Hash: SHA2
+            Security: 256
+            FileKeyStore:
+                KeyStore:
+FileLedger:
+    Location:  /opt/fabric/orderer/data
+    Prefix: hyperledger-fabric-ordererledger
+RAMLedger:
+    HistorySize: 1000
+Kafka:
+    Retry:
+        ShortInterval: 5s
+        ShortTotal: 10m
+        LongInterval: 5m
+        LongTotal: 12h
+        NetworkTimeouts:
+            DialTimeout: 10s
+            ReadTimeout: 10s
+            WriteTimeout: 10s
+        Metadata:
+            RetryBackoff: 250ms
+            RetryMax: 3
+        Producer:
+            RetryBackoff: 100ms
+            RetryMax: 3
+        Consumer:
+            RetryBackoff: 2s
+    Verbose: false
+    TLS:
+      Enabled: false
+      PrivateKey:
+        #File: path/to/PrivateKey
+      Certificate:
+        #File: path/to/Certificate
+      RootCAs:
+        #File: path/to/RootCAs
+    Version:
+```
+
+```bash
+vi  /root/fabric/fabric-deploy/orderer.za.com/startOrderer.sh
+```
+
+```bash
+#!/bin/bash
+cd /opt/fabric/orderer
+./orderer 2>&1 |tee log
+```
+
+```bash
+chmod +x  /root/fabric/fabric-deploy/orderer.za.com/startOrderer.sh
+```
+
+#### 4.配置 peer0.org1.za.com .(详细说明见A 章节)，下面只整理命令.
+
+```bash
+mkdir -p  /root/fabric/fabric-deploy/peer0.org1.za.com
+cd /root/fabric/fabric-deploy
+cp bin/peer peer0.org1.za.com/
+#复制 tls 目录(crypto生成的，fabric-ca 没法生成)
+cp -rf  ./certs_by_crypto/peerOrganizations/org1.za.com/peers/peer0.org1.za.com/tls ./peer0.org1.za.com/
+#复制 msp 目录(fabric-ca 来生成的)
+cp -rf ./certs_by_ca/Organizations/org1.za.com/peer0/msp ./peer0.org1.za.com/
+```
+
+```bash
+vi /root/fabric/fabric-deploy/peer0.org1.za.com/core.yaml
+```
+
+```bash
+logging:
+    level:      info
+    cauthdsl:   warning
+    gossip:     warning
+    grpc:       error
+    ledger:     info
+    msp:        warning
+    policies:   warning
+    peer:
+        gossip: warning
+    
+    format: '%{color}%{time:2006-01-02 15:04:05.000 MST} [%{module}] %{shortfunc} -> %{level:.4s} %{id:03x}%{color:reset} %{message}'
+    
+peer:
+    
+    id: peer0.org1.za.com
+    
+    networkId: dev
+    
+    listenAddress: 0.0.0.0:7051
+    
+    address: 0.0.0.0:7051
+    
+    addressAutoDetect: false
+    
+    gomaxprocs: -1
+    
+    keepalive:
+        minInterval: 60s
+        client:
+            interval: 60s
+            timeout: 20s
+        deliveryClient:
+            interval: 60s
+            timeout: 20s
+    
+    gossip:
+        bootstrap: peer0.org1.za.com:7051
+    
+        useLeaderElection: true
+        orgLeader: false
+    
+        endpoint:
+        maxBlockCountToStore: 100
+        maxPropagationBurstLatency: 10ms
+        maxPropagationBurstSize: 10
+        propagateIterations: 1
+        propagatePeerNum: 3
+        pullInterval: 4s
+        pullPeerNum: 3
+        requestStateInfoInterval: 4s
+        publishStateInfoInterval: 4s
+        stateInfoRetentionInterval:
+        publishCertPeriod: 10s
+        skipBlockVerification: false
+        dialTimeout: 3s
+        connTimeout: 2s
+        recvBuffSize: 20
+        sendBuffSize: 200
+        digestWaitTime: 1s
+        requestWaitTime: 1500ms
+        responseWaitTime: 2s
+        aliveTimeInterval: 5s
+        aliveExpirationTimeout: 25s
+        reconnectInterval: 25s
+        externalEndpoint:
+        election:
+            startupGracePeriod: 15s
+            membershipSampleInterval: 1s
+            leaderAliveThreshold: 10s
+            leaderElectionDuration: 5s
+        pvtData:
+            pullRetryThreshold: 60s
+            transientstoreMaxBlockRetention: 1000
+            pushAckTimeout: 3s
+            btlPullMargin: 10
+            reconcileBatchSize: 10
+            reconcileSleepInterval: 5m
+    
+    tls:
+        enabled:  true
+        clientAuthRequired: false
+        cert:
+            file: tls/server.crt
+        key:
+            file: tls/server.key
+        rootcert:
+            file: tls/ca.crt
+        clientRootCAs:
+            files:
+              - tls/ca.crt
+        clientKey:
+            file:
+        clientCert:
+            file:
+    
+    authentication:
+        timewindow: 15m
+    
+    fileSystemPath: /var/hyperledger/production
+    
+    BCCSP:
+        Default: SW
+        SW:
+            Hash: SHA2
+            Security: 256
+            FileKeyStore:
+                KeyStore:
+        PKCS11:
+            Library:
+            Label:
+            Pin:
+            Hash:
+            Security:
+            FileKeyStore:
+                KeyStore:
+    
+    mspConfigPath: msp
+    
+    localMspId: Org1MSP
+    
+    client:
+        connTimeout: 3s
+    
+    deliveryclient:
+        reconnectTotalTimeThreshold: 3600s
+    
+        connTimeout: 3s
+    
+        reConnectBackoffThreshold: 3600s
+    
+    localMspType: bccsp
+    
+    profile:
+        enabled:     false
+        listenAddress: 0.0.0.0:6060
+    adminService:
+    handlers:
+        authFilters:
+          -
+            name: DefaultAuth
+          -
+            name: ExpirationCheck    # This filter checks identity x509 certificate expiration
+        decorators:
+          -
+            name: DefaultDecorator
+        endorsers:
+          escc:
+            name: DefaultEndorsement
+            library:
+        validators:
+          vscc:
+            name: DefaultValidation
+            library:
+    validatorPoolSize:
+    discovery:
+        enabled: true
+        authCacheEnabled: true
+        authCacheMaxSize: 1000
+        authCachePurgeRetentionRatio: 0.75
+        orgMembersAllowedAccess: false
+    
+vm:
+    endpoint: unix:///var/run/docker.sock
+    docker:
+        tls:
+            enabled: false
+            ca:
+                file: docker/ca.crt
+            cert:
+                file: docker/tls.crt
+            key:
+                file: docker/tls.key
+        attachStdout: false
+        hostConfig:
+            NetworkMode: host
+            Dns:
+            LogConfig:
+                Type: json-file
+                Config:
+                    max-size: "50m"
+                    max-file: "5"
+            Memory: 2147483648
+    
+    
+chaincode:
+    id:
+        path:
+        name:
+    
+    builder: $(DOCKER_NS)/fabric-ccenv:latest
+    pull: false
+    
+    golang:
+        runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASE_VERSION)
+        dynamicLink: false
+    
+    car:
+        runtime: $(BASE_DOCKER_NS)/fabric-baseos:$(ARCH)-$(BASE_VERSION)
+    
+    java:
+        runtime: $(DOCKER_NS)/fabric-javaenv:$(ARCH)-$(PROJECT_VERSION)
+    
+    node:
+        runtime: $(BASE_DOCKER_NS)/fabric-baseimage:$(ARCH)-$(BASE_VERSION)
+    startuptimeout: 300s
+    
+    executetimeout: 30s
+    mode: net
+    keepalive: 0
+    system:
+        +lifecycle: enable
+        cscc: enable
+        lscc: enable
+        escc: enable
+        vscc: enable
+        qscc: enable
+    systemPlugins:
+    logging:
+      level:  info
+      shim:   warning
+      format: '%{color}%{time:2006-01-02 15:04:05.000 MST} [%{module}] %{shortfunc} -> %{level:.4s} %{id:03x}%{color:reset} %{message}'
+    
+    
+ledger:
+    
+  blockchain:
+    
+  state:
+    stateDatabase: CouchDB     #goleveldb
+    totalQueryLimit: 100000
+    couchDBConfig:
+       couchDBAddress: 127.0.0.1:5984
+       username:    admin
+       password:    password
+       maxRetries: 3
+       maxRetriesOnStartup: 10
+       requestTimeout: 35s
+       internalQueryLimit: 1000
+       maxBatchUpdateSize: 1000
+       warmIndexesAfterNBlocks: 1
+       createGlobalChangesDB: false
+    
+  history:
+    enableHistoryDatabase: true
+    
+    
+metrics:
+    enabled: false
+    reporter: statsd
+    interval: 1s
+    statsdReporter:
+          address: 0.0.0.0:8125
+          flushInterval: 2s
+          flushBytes: 1432
+    promReporter:
+          listenAddress: 0.0.0.0:8080
+```
+
+```bash
+vi  /root/fabric/fabric-deploy/peer0.org1.za.com/startPeer.sh
+```
+
+```bash
+#!/bin/bash
+cd /opt/fabric/peer
+./peer node start 2>&1 |tee log
+```
+
+```bash
+chmod +x /root/fabric/fabric-deploy/peer0.org1.za.com/startPeer.sh
+```
+
+#### 5.配置 peer1.org1.za.com .(详细说明见A 章节)，下面只整理命令.
+
+```bash
+cd /root/fabric/fabric-deploy
+mkdir -p /root/fabric/fabric-deploy/peer1.org1.za.com
+cp bin/peer     peer1.org1.za.com/
+#复制 tls 目录(crypto生成的，fabric-ca 没法生成)
+cp -rf  ./certs_by_crypto/peerOrganizations/org1.za.com/peers/peer1.org1.za.com/tls ./peer1.org1.za.com/
+#复制 msp 目录(fabric-ca 来生成的)
+cp -rf ./certs_by_ca/Organizations/org1.za.com/peer1/msp ./peer1.org1.za.com/
+
+cp peer0.org1.za.com/core.yaml  peer1.org1.za.com
+
+sed -i "s/peer0.org1.za.com/peer1.org1.za.com/g" peer1.org1.za.com/core.yaml
+
+cp /root/fabric/fabric-deploy/peer0.org1.za.com/startPeer.sh  /root/fabric/fabric-deploy/peer1.org1.za.com/
+
+```
+
+#### 6.配置 peer0.org2.za.com .(详细说明见A 章节)，下面只整理命令.
+
+```bash
+cd /root/fabric/fabric-deploy
+mkdir -p /root/fabric/fabric-deploy/peer0.org2.za.com
+cp bin/peer     ./peer0.org2.za.com/
+#复制 tls 目录(crypto生成的，fabric-ca 没法生成)
+cp -rf  ./certs_by_crypto/peerOrganizations/org2.za.com/peers/peer0.org2.za.com/tls ./peer0.org2.za.com/
+#复制 msp 目录(fabric-ca 来生成的)
+cp -rf ./certs_by_ca/Organizations/org2.za.com/peer0/msp ./peer0.org2.za.com/
+
+cp peer0.org1.za.com/core.yaml  peer0.org2.za.com
+
+sed -i "s/peer0.org1.za.com/peer0.org2.za.com/g" peer0.org2.za.com/core.yaml
+sed -i "s/Org1MSP/Org2MSP/g" peer0.org2.za.com/core.yaml    
+
+cp /root/fabric/fabric-deploy/peer0.org1.za.com/startPeer.sh  peer0.org2.za.com/
+
+```
+
+#### 7.配置 peer1.org2.za.com .(详细说明见A 章节)，下面只整理命令.
+
+```bash
+cd /root/fabric/fabric-deploy
+mkdir -p /root/fabric/fabric-deploy/peer1.org2.za.com
+cp bin/peer     ./peer1.org2.za.com/
+#复制 tls 目录(crypto生成的，fabric-ca 没法生成)
+cp -rf  ./certs_by_crypto/peerOrganizations/org2.za.com/peers/peer1.org2.za.com/tls ./peer1.org2.za.com/
+#复制 msp 目录(fabric-ca 来生成的)
+cp -rf ./certs_by_ca/Organizations/org2.za.com/peer1/msp ./peer1.org2.za.com/
+
+cp peer0.org1.za.com/core.yaml  peer1.org2.za.com
+
+sed -i "s/peer0.org1.za.com/peer1.org2.za.com/g" peer1.org2.za.com/core.yaml
+sed -i "s/Org1MSP/Org2MSP/g" peer1.org2.za.com/core.yaml    
+
+cp /root/fabric/fabric-deploy/peer0.org1.za.com/startPeer.sh  peer1.org2.za.com/
+
+```
+
+#### 8.复制到各个节点机器上
+`注意`：为了避免各种问题，先清除 orderer 和 peer 节点上的目录
+
+```bash
+cd /root/fabric/fabric-deploy
+scp -r orderer.za.com/* root@orderer.za.com:/opt/fabric/orderer/
+scp -r peer0.org1.za.com/* root@peer0.org1.za.com:/opt/fabric/peer/
+scp -r peer1.org1.za.com/* root@peer1.org1.za.com:/opt/fabric/peer/
+scp -r peer0.org2.za.com/* root@peer0.org2.za.com:/opt/fabric/peer/
+scp -r peer1.org2.za.com/* root@peer1.org2.za.com:/opt/fabric/peer/
+```
+
+#### 9.配置configtx.yaml文件
+
+`主要是在原有的文件上修改MSP 文件的路径`
+
+```bash
+vim /root/fabric/fabric-deploy/configtx.yaml
+
+#文件内容如下：
+Organizations:
+    - &OrdererOrg
+        Name: OrdererOrg
+        ID: OrdererMSP
+        MSPDir: ./certs_by_ca/Organizations/za.com/orderer/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('OrdererMSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('OrdererMSP.admin')"
+    - &Org1
+        Name: Org1MSP
+        ID: Org1MSP
+        MSPDir: ./certs_by_ca/Organizations/org1.za.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Org1MSP.admin', 'Org1MSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Org1MSP.admin', 'Org1MSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Org1MSP.admin')"
+        AnchorPeers:
+            - Host: peer0.org1.za.com
+              Port: 7051
+    - &Org2
+        Name: Org2MSP
+        ID: Org2MSP
+        MSPDir: ./certs_by_ca/Organizations/org2.za.com/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('Org2MSP.admin', 'Org2MSP.member')"
+            Writers:
+                Type: Signature
+                Rule: "OR('Org2MSP.admin', 'Org2MSP.member')"
+            Admins:
+                Type: Signature
+                Rule: "OR('Org2MSP.admin')"
+        AnchorPeers:
+            - Host: peer0.org2.za.com
+              Port: 7051
+    
+Capabilities:
+    Channel: &ChannelCapabilities
+        V1_3: true
+    Orderer: &OrdererCapabilities
+        V1_1: true
+    Application: &ApplicationCapabilities
+        V1_3: true
+        V1_2: false
+        V1_1: false
+    
+Application: &ApplicationDefaults
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ApplicationCapabilities    
+    
+Orderer: &OrdererDefaults
+    OrdererType: kafka
+    Addresses:
+        - orderer.za.com:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Kafka:
+        Brokers:
+            - kafka.za.com:9092       # 可以填入多个kafka节点的地址
+            - kafka.za.com:9093
+            - kafka.za.com:9094
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+    Capabilities:
+        <<: *OrdererCapabilities
+    
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "MAJORITY Admins"
+    Capabilities:
+        <<: *ChannelCapabilities
+    
+Profiles:
+    TwoOrgsOrdererGenesis:
+        <<: *ChannelDefaults
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *OrdererOrg
+        Consortiums:
+            SampleConsortium:
+                Organizations:
+                    - *Org1
+                    - *Org2
+    TwoOrgsChannel:
+        Consortium: SampleConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *Org1
+                - *Org2
+```
+
+#### 10.生成genesisblock ,并且复制到 orderer 主机
+
+```bash
+cd /root/fabric/fabric-deploy
+./bin/configtxgen -profile TwoOrgsOrdererGenesis -outputBlock ./genesisblock -channelID genesis
+scp ./genesisblock  root@orderer.za.com:/opt/fabric/orderer
+```
+
+#### 11.按照正常流程启动 orderer
+
+进入orderer 主机
+```bash
+/etc/init.d/autoRunOrderer.sh
+```
+
+#### 11.按照正常流程启动 peer
+
+进入peer 主机
+```bash
+/etc/init.d/autoRunPeer.sh
+```
+
+#### 12.在 cli 主机上建立 users 目录，进行部署
+
+##### a).构建Admin@org1.za.com 的用户目录
+
+```bash
+cd /root/fabric/fabric-deploy/users
+mkdir Admin@org1.za.com
+cd  Admin@org1.za.com
+
+cp -rf  /root/fabric/fabric-deploy/certs_by_crypto/peerOrganizations/org1.za.com/users/Admin@org1.za.com/tls  /root/fabric/fabric-deploy/users/Admin@org1.za.com/
+
+cp -rf /root/fabric/fabric-deploy/certs_by_crypto/peerOrganizations/org1.za.com/users/Admin@org1.za.com/msp  /root/fabric/fabric-deploy/users/Admin@org1.za.com/
+
+cp /root/fabric/fabric-deploy/peer0.org1.za.com/core.yaml  /root/fabric/fabric-deploy/users/Admin@org1.za.com/
+
+```
+
+```bash
+vim /root/fabric/fabric-deploy/users/Admin@org1.za.com/peer.sh
+```
+
+```bash
+chmod  +x /root/fabric/fabric-deploy/users/Admin@org1.za.com/peer.sh
+./peer.sh node status
+
+```
+
+## E. 一些常用的Fabric  命令
+### 一. Fabric  CA 部分
 #### 1. 查看证书信息
 
 通过 openssh 命令来查看证书信息
@@ -2222,4 +2931,4 @@ configtxgen -inspectBlock genesisblock | jq
 ```
 把查询信息转换成 json。需要安装  jq
     
-###  三.  未完！待续...
+##  三.  未完！待续...
