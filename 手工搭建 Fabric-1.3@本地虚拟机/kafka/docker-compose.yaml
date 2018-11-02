@@ -1,12 +1,13 @@
 version: '3'
 services:
   zookeeper:
-    image: wurstmeister/zookeeper:latest
+    image: hyperledger/fabric-zookeeper:amd64-0.4.13
     container_name: zookeeper
     volumes:
       - "/etc/localtime:/etc/localtime"
-      - "/root/kafka/zookeeper/data:/opt/zookeeper-3.4.9/data"
-      - "/root/kafka/zookeeper/conf:/opt/zookeeper-3.4.9/conf"
+      - "/root/kafka/zookeeper/data:/data"
+      - "/root/kafka/zookeeper/datalog:/datalog"
+      - "/root/kafka/zookeeper/conf:/conf"
     restart: always
     ports:
       - "2181:2181"
@@ -39,7 +40,7 @@ services:
 
   
   kafka-001:
-    image: wurstmeister/kafka:2.11-1.1.1
+    image: hyperledger/fabric-kafka:amd64-0.4.13
     container_name: kafka-001
     volumes:
       - "/etc/localtime:/etc/localtime"
@@ -49,7 +50,7 @@ services:
       - "KAFKA_BROKER_ID=101"
       - "KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181"
       - "KAFKA_DELETE_TOPIC_ENABLE=true"
-      - "KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://192.168.188.111:9092"
+      - "KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://192.168.2.229:9092"
       - "KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092"
       - "KAFKA_LOG_DIRS=/kafka/kafka-logs-001"
     ports:
@@ -65,7 +66,7 @@ services:
             max-size: "100m" 
 
   kafka-002:
-    image: wurstmeister/kafka:2.11-1.1.1
+    image: hyperledger/fabric-kafka:amd64-0.4.13
     container_name: kafka-002
     volumes:
       - "/etc/localtime:/etc/localtime"
@@ -75,7 +76,7 @@ services:
       - "KAFKA_BROKER_ID=102"
       - "KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181"
       - "KAFKA_DELETE_TOPIC_ENABLE=true"
-      - "KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://192.168.188.111:9093"
+      - "KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://192.168.2.229:9093"
       - "KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092"
       - "KAFKA_LOG_DIRS=/kafka/kafka-logs-002"
     ports:
@@ -91,7 +92,7 @@ services:
             max-size: "100m"
 
   kafka-003:
-    image: wurstmeister/kafka:2.11-1.1.1
+    image: hyperledger/fabric-kafka:amd64-0.4.13
     container_name: kafka-003
     volumes:
       - "/etc/localtime:/etc/localtime"
@@ -101,7 +102,7 @@ services:
       - "KAFKA_BROKER_ID=103"
       - "KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181"
       - "KAFKA_DELETE_TOPIC_ENABLE=true"
-      - "KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://192.168.188.111:9094"
+      - "KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://192.168.2.229:9094"
       - "KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092"
       - "KAFKA_LOG_DIRS=/kafka/kafka-logs-003"
     ports:
