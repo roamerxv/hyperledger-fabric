@@ -1,0 +1,161 @@
+- hosts: cli  
+  vars:
+    fabric_deploy_home:  /root/fabric/fabric-deploy
+  remote_user: root
+  gather_facts: no
+  tasks:
+
+  - name:  "创建创世纪区块的配置文件 configtx.yaml 文件"
+    copy:
+      dest: "{{ fabric_deploy_home }}/configtx.yaml"
+      content: |
+        Organizations:
+            - &OrdererOrg
+                Name: OrdererOrg
+                ID: OrdererMSP
+                MSPDir: ./certs/ordererOrganizations/za.com/msp
+                Policies:
+                    Readers:
+                        Type: Signature
+                        Rule: "OR('OrdererMSP.member')"
+                    Writers:
+                        Type: Signature
+                        Rule: "OR('OrdererMSP.member')"
+                    Admins:
+                        Type: Signature
+                        Rule: "OR('OrdererMSP.admin')"
+            - &Org1
+                Name: Org1MSP
+                ID: Org1MSP
+                MSPDir: ./certs/peerOrganizations/org1.za.com/msp
+                Policies:
+                    Readers:
+                        Type: Signature
+                        Rule: "OR('Org1MSP.admin', 'Org1MSP.member')"
+                    Writers:
+                        Type: Signature
+                        Rule: "OR('Org1MSP.admin', 'Org1MSP.member')"
+                    Admins:
+                        Type: Signature
+                        Rule: "OR('Org1MSP.admin')"
+                AnchorPeers:
+                    - Host: peer0.org1.za.com
+                      Port: 7051
+            - &Org2
+                Name: Org2MSP
+                ID: Org2MSP
+                MSPDir: ./certs/peerOrganizations/org2.za.com/msp
+                Policies:
+                    Readers:
+                        Type: Signature
+                        Rule: "OR('Org2MSP.admin', 'Org2MSP.member')"
+                    Writers:
+                        Type: Signature
+                        Rule: "OR('Org2MSP.admin', 'Org2MSP.member')"
+                    Admins:
+                        Type: Signature
+                        Rule: "OR('Org2MSP.admin')"
+                AnchorPeers:
+                    - Host: peer0.org2.za.com
+                      Port: 7051
+            
+        Capabilities:
+            Channel: &ChannelCapabilities
+                V1_3: true
+            Orderer: &OrdererCapabilities
+                V1_1: true
+            Application: &ApplicationCapabilities
+                V1_3: true
+                V1_2: false
+                V1_1: false
+            
+        Application: &ApplicationDefaults
+            Organizations:
+            Policies:
+                Readers:
+                    Type: ImplicitMeta
+                    Rule: "ANY Readers"
+                Writers:
+                    Type: ImplicitMeta
+                    Rule: "ANY Writers"
+                Admins:
+                    Type: ImplicitMeta
+                    Rule: "MAJORITY Admins"
+            Capabilities:
+                <<: *ApplicationCapabilities    
+            
+        Orderer: &OrdererDefaults
+            OrdererType: kafka
+            Addresses:
+                - orderer.za.com:7050
+            BatchTimeout: 2s
+            BatchSize:
+                MaxMessageCount: 10
+                AbsoluteMaxBytes: 99 MB
+                PreferredMaxBytes: 512 KB
+            Kafka:
+                Brokers:
+                    - kafka.za.com:9092       # 可以填入多个kafka节点的地址
+                    - kafka.za.com:9093
+                    - kafka.za.com:9094
+            Organizations:
+            Policies:
+                Readers:
+                    Type: ImplicitMeta
+                    Rule: "ANY Readers"
+                Writers:
+                    Type: ImplicitMeta
+                    Rule: "ANY Writers"
+                Admins:
+                    Type: ImplicitMeta
+                    Rule: "MAJORITY Admins"
+                BlockValidation:
+                    Type: ImplicitMeta
+                    Rule: "ANY Writers"
+            Capabilities:
+                <<: *OrdererCapabilities
+            
+        Channel: &ChannelDefaults
+            Policies:
+                Readers:
+                    Type: ImplicitMeta
+                    Rule: "ANY Readers"
+                Writers:
+                    Type: ImplicitMeta
+                    Rule: "ANY Writers"
+                Admins:
+                    Type: ImplicitMeta
+                    Rule: "MAJORITY Admins"
+            Capabilities:
+                <<: *ChannelCapabilities
+            
+        Profiles:
+            TwoOrgsOrdererGenesis:
+                <<: *ChannelDefaults
+                Orderer:
+                    <<: *OrdererDefaults
+                    Organizations:
+                        - *OrdererOrg
+                Consortiums:
+                    SampleConsortium:
+                        Organizations:
+                            - *Org1
+                            - *Org2
+            TwoOrgsChannel:
+                Consortium: SampleConsortium
+                Application:
+                    <<: *ApplicationDefaults
+                    Organizations:
+                        - *Org1
+                        - *Org2
+
+  - name:  "生成创世纪区块"
+    command: '{{ fabric_deploy_home }}/bin/configtxgen -profile TwoOrgsOrdererGenesis -outputBlock {{ fabric_deploy_home }}/genesisblock -channelID genesis'
+    args:
+      chdir: '{{ fabric_deploy_home }}'
+
+
+  - name:  "把区块文件 genesisblock 复制到 oderer.za.com机器上"
+    command: 'scp {{ fabric_deploy_home }}/genesisblock  root\@orderer.za.com:/opt/fabric/orderer'
+    args:
+      chdir: '{{ fabric_deploy_home }}'

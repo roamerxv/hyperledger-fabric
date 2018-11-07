@@ -1,0 +1,103 @@
+- hosts: cli  
+  vars:
+    fabric_deploy_home:  /root/fabric/fabric-deploy
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "解压 fabric 文件"
+    shell: tar -xvf hyperledger-fabric-1.3.1-stable-linux-amd64.1.3.1-stable-306640d.tar.gz
+    args:
+      chdir: '{{ fabric_deploy_home }}'
+  
+  - name:  "生成证书目录"
+    shell: ./bin/cryptogen generate --config=crypto-config.yaml --output ./certs
+    args:
+      chdir: '{{ fabric_deploy_home }}'
+
+  - name:  "创建 orderer.za.com 主机部署目录，并且复制证书"
+    copy: 
+      src: '{{ fabric_deploy_home }}/certs/ordererOrganizations/za.com/orderers/orderer.za.com'
+      dest: '{{ fabric_deploy_home }}'
+
+  - name:  "复制 orderer 执行程序到 {{ fabric_deploy_home }}/orderer.za.com目录下"
+    copy: 
+      src: '{{ fabric_deploy_home }}/bin/orderer'
+      dest: '{{ fabric_deploy_home }}/orderer.za.com'
+      mode: 0775
+
+  - name:  "创建 orderer.yaml 文件"
+    copy:
+      dest: "{{ fabric_deploy_home }}/orderer.za.com/orderer.yaml"
+      content: |
+        General:
+            LedgerType: file
+            ListenAddress: 0.0.0.0
+            ListenPort: 7050
+            TLS:
+                Enabled: true
+                PrivateKey: ./tls/server.key
+                Certificate: ./tls/server.crt
+                RootCAs:
+                  - ./tls/ca.crt
+        #        ClientAuthEnabled: false
+        #        ClientRootCAs:
+            LogLevel: debug
+            LogFormat: '%{color}%{time:2006-01-02 15:04:05.000 MST} [%{module}] %{shortfunc} -> %{level:.4s} %{id:03x}%{color:reset} %{message}'
+        #    GenesisMethod: provisional
+            GenesisMethod: file
+            GenesisProfile: SampleInsecureSolo
+            GenesisFile: ./genesisblock
+            LocalMSPDir: ./msp
+            LocalMSPID: OrdererMSP
+            Profile:
+                Enabled: false
+                Address: 0.0.0.0:6060
+            BCCSP:
+                Default: SW
+                SW:
+                    Hash: SHA2
+                    Security: 256
+                    FileKeyStore:
+                        KeyStore:
+        FileLedger:
+            Location:  /opt/fabric/orderer/data
+            Prefix: hyperledger-fabric-ordererledger
+        RAMLedger:
+            HistorySize: 1000
+        Kafka:
+            Retry:
+                ShortInterval: 5s
+                ShortTotal: 10m
+                LongInterval: 5m
+                LongTotal: 12h
+                NetworkTimeouts:
+                    DialTimeout: 10s
+                    ReadTimeout: 10s
+                    WriteTimeout: 10s
+                Metadata:
+                    RetryBackoff: 250ms
+                    RetryMax: 3
+                Producer:
+                    RetryBackoff: 100ms
+                    RetryMax: 3
+                Consumer:
+                    RetryBackoff: 2s
+            Verbose: false
+            TLS:
+              Enabled: false
+              PrivateKey:
+                #File: path/to/PrivateKey
+              Certificate:
+                #File: path/to/Certificate
+              RootCAs:
+                #File: path/to/RootCAs
+            Version:
+    
+  - name:  "创建一个启动 orderer 的批处理文件"
+    copy: 
+      dest: '{{ fabric_deploy_home }}/orderer.za.com/startOrderer.sh'
+      mode: 0775
+      content: |
+        #!/bin/bash
+        cd /opt/fabric/orderer
+        ./orderer 2>&1 |tee log   

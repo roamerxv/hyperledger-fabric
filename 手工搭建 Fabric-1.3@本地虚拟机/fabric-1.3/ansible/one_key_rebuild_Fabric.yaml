@@ -1,0 +1,29 @@
+# 步骤1:
+# 停止fabric 网络环境
+- import_playbook: stop_Fabric_net.yaml
+# 清除所有网络数据
+- import_playbook: clean_Fabric_net_data.yaml
+# 删除 orderer 上的 fabric 部署文件
+- import_playbook: ./orderer/0_0_1_delete_orderer.yaml
+# 删除 peer 上的部署文件
+- import_playbook: ./peer/0_0_1_delete_peer.yaml
+# 删除 cli 上的 fabric-deploy 目录
+- import_playbook: ./cli/0_0_1_delete_fabric_deploy.yaml
+# 重新构建 cli 上的 fabric-deploy 下的 orderer.za.com 目录
+- import_playbook: ./cli/0_1_1_create_orderer_folder.yaml
+# 重新构建 cli 上的 fabric-deploy 下的 pee0.org1.za.com 目录
+- import_playbook: ./cli/0_1_2_create_pee0_org1_za_com_folder.yaml
+# 重新构建 cli 上的 fabric-deploy 下的 pee1.org1.za.com 目录
+- import_playbook: ./cli/0_1_3_create_pee1_org1_za_com_folder.yaml
+# 重新构建 cli 上的 fabric-deploy 下的 pee0.org2.za.com 目录
+- import_playbook: ./cli/0_1_4_create_pee0_org2_za_com_folder.yaml
+# 重新构建 cli 上的 fabric-deploy 下的 pee1.org2.za.com 目录
+- import_playbook: ./cli/0_1_5_create_pee1_org2_za_com_folder.yaml
+# 复制 orderer 的运行环境到 orderer 主机上
+- import_playbook: ./cli/0_3_1_copy_orderer_za_com.yaml
+# 生成创世纪区块,并且复制到orderer 主机上
+- import_playbook: ./cli/0_2_1_create_genesisblock.yaml
+# 复制peer 的运行环境到各个peer 主机上
+- import_playbook: ./cli/0_3_2_copy_peers.yaml
+# 生成cli 上的 users 目录
+- import_playbook: ./cli/0_1_6_create_users_peers_folder.yaml

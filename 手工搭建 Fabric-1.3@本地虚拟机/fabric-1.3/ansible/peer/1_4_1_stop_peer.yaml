@@ -1,6 +1,7 @@
-- hosts: peers  
+- name: 开始停止 在所有的 peer 主机上的 peer 进程
+  hosts: peers 
   vars:
-    process_name: peer
+    process_name: /opt/fabric/peer/peer
   remote_user: root
   gather_facts: no
   tasks:

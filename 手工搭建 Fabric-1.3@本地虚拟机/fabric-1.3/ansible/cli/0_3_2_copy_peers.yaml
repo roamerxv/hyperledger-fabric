@@ -1,0 +1,16 @@
+- hosts: cli  
+  vars:
+    fabric_deploy_home:  /root/fabric/fabric-deploy
+  remote_user: root
+  gather_facts: no
+  tasks:
+
+  - name:  "把 {{ item }} 目录复制到 {{ item }} 机器上"
+    shell: 'scp -r {{ fabric_deploy_home }}/{{ item }}/*  root\@{{ item }}:/opt/fabric/peer/'
+    args:
+      chdir: '{{ fabric_deploy_home }}'
+    with_items:
+      - peer0.org1.za.com
+      - peer1.org1.za.com
+      - peer0.org2.za.com
+      - peer1.org2.za.com

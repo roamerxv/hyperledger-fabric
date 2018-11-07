@@ -1,0 +1,147 @@
+- hosts: cli  
+  vars:
+    fabric_deploy_home:  /root/fabric/fabric-deploy
+  remote_user: root
+  gather_facts: no
+  tasks:
+
+#### Admin@org1.za.com
+
+  - name: "复制证书文件到 /users/Admin@org1.za.com"
+    copy: 
+      src: '{{ fabric_deploy_home }}/certs/peerOrganizations/org1.za.com/users/Admin@org1.za.com'
+      dest: '{{ fabric_deploy_home }}/users'
+
+  - name: "复制core.yaml文件到 /users/Admin@org1.za.com"
+    copy: 
+      src: '{{ fabric_deploy_home }}/peer0.org1.za.com/core.yaml'
+      dest: '{{ fabric_deploy_home }}/users/Admin@org1.za.com'      
+
+  - name:  "建立 users/Admin@org1.za.com 下的 peer.sh "
+    copy:
+      dest: "{{ fabric_deploy_home }}/users/Admin@org1.za.com/peer.sh"
+      mode: 0777
+      content: |
+        #!/bin/bash
+        cd "/root/fabric/fabric-deploy/users/Admin@org1.za.com"
+        PATH=`pwd`/../../bin:$PATH
+        export FABRIC_CFG_PATH=`pwd`
+        export CORE_PEER_TLS_ENABLED=true
+        export CORE_PEER_TLS_CERT_FILE=./tls/client.crt
+        export CORE_PEER_TLS_KEY_FILE=./tls/client.key
+        export CORE_PEER_MSPCONFIGPATH=./msp
+        export CORE_PEER_ADDRESS=peer0.org1.za.com:7051
+        export CORE_PEER_LOCALMSPID=Org1MSP
+        export CORE_PEER_TLS_ROOTCERT_FILE=./tls/ca.crt
+        export CORE_PEER_ID=peer0.org1.za.com
+        export CORE_LOGGING_LEVEL=INFO
+        peer $*
+  
+#### User1@org1.za.com
+
+  - name: "复制证书文件到 /users/User1@org1.za.com"
+    copy: 
+      src: '{{ fabric_deploy_home }}/certs/peerOrganizations/org1.za.com/users/User1@org1.za.com'
+      dest: '{{ fabric_deploy_home }}/users'
+
+  - name: "复制core.yaml文件到 /users/User1@org1.za.com"
+    copy: 
+      src: '{{ fabric_deploy_home }}/peer1.org1.za.com/core.yaml'
+      dest: '{{ fabric_deploy_home }}/users/User1@org1.za.com'
+
+  - name:  "建立 users/User1@org1.za.com 下的 peer.sh "
+    copy:
+      dest: "{{ fabric_deploy_home }}/users/User1@org1.za.com/peer.sh"
+      mode: 0777
+      content: |
+        #!/bin/bash
+        cd "/root/fabric/fabric-deploy/users/User1@org1.za.com"
+        PATH=`pwd`/../../bin:$PATH
+        export FABRIC_CFG_PATH=`pwd`
+        export CORE_PEER_TLS_ENABLED=true
+        export CORE_PEER_TLS_CERT_FILE=./tls/client.crt
+        export CORE_PEER_TLS_KEY_FILE=./tls/client.key
+        export CORE_PEER_MSPCONFIGPATH=./msp
+        export CORE_PEER_ADDRESS=peer1.org1.za.com:7051
+        export CORE_PEER_LOCALMSPID=Org1MSP
+        export CORE_PEER_TLS_ROOTCERT_FILE=./tls/ca.crt
+        export CORE_PEER_ID=peer1.org1.za.com
+        export CORE_LOGGING_LEVEL=INFO
+        peer $*
+
+  - name:  "授权 User1@org1.za.com 具有 admin 的权限"
+    command: 'scp {{ fabric_deploy_home }}/users/User1@org1.za.com/msp/admincerts/User1@org1.za.com-cert.pem  root\@peer1.org1.za.com:/opt/fabric/peer/msp/admincerts'
+    args:
+      chdir: '{{ fabric_deploy_home }}'
+
+
+##### Admin@org2.za.com
+
+  - name: "复制证书文件到 /users/Admin@org2.za.com"
+    copy: 
+      src: '{{ fabric_deploy_home }}/certs/peerOrganizations/org2.za.com/users/Admin@org2.za.com'
+      dest: '{{ fabric_deploy_home }}/users'
+
+  - name: "复制core.yaml文件到 /users/Admin@org2.za.com"
+    copy: 
+      src: '{{ fabric_deploy_home }}/peer0.org2.za.com/core.yaml'
+      dest: '{{ fabric_deploy_home }}/users/Admin@org2.za.com'
+
+  - name:  "建立 users/Admin@org2.za.com 下的 peer.sh "
+    copy:
+      dest: "{{ fabric_deploy_home }}/users/Admin@org2.za.com/peer.sh"
+      mode: 0777
+      content: |
+        #!/bin/bash
+        cd "/root/fabric/fabric-deploy/users/Admin@org2.za.com"
+        PATH=`pwd`/../../bin:$PATH
+        export FABRIC_CFG_PATH=`pwd`
+        export CORE_PEER_TLS_ENABLED=true
+        export CORE_PEER_TLS_CERT_FILE=./tls/client.crt
+        export CORE_PEER_TLS_KEY_FILE=./tls/client.key
+        export CORE_PEER_MSPCONFIGPATH=./msp
+        export CORE_PEER_ADDRESS=peer0.org2.za.com:7051
+        export CORE_PEER_LOCALMSPID=Org2MSP
+        export CORE_PEER_TLS_ROOTCERT_FILE=./tls/ca.crt
+        export CORE_PEER_ID=peer0.org2.za.com
+        export CORE_LOGGING_LEVEL=INFO
+        peer $*
+
+##### User1@org2.za.com
+
+  - name: "复制证书文件到 /users/User1@org2.za.com"
+    copy: 
+      src: '{{ fabric_deploy_home }}/certs/peerOrganizations/org2.za.com/users/User1@org2.za.com'
+      dest: '{{ fabric_deploy_home }}/users'
+
+  - name: "复制core.yaml文件到 /users/User1@org2.za.com"
+    copy: 
+      src: '{{ fabric_deploy_home }}/peer1.org2.za.com/core.yaml'
+      dest: '{{ fabric_deploy_home }}/users/User1@org2.za.com'
+
+  - name:  "建立 users/User1@org2.za.com 下的 peer.sh "
+    copy:
+      dest: "{{ fabric_deploy_home }}/users/User1@org2.za.com/peer.sh"
+      mode: 0777
+      content: |
+        #!/bin/bash
+        cd "/root/fabric/fabric-deploy/users/User1@org2.za.com"
+        PATH=`pwd`/../../bin:$PATH
+        export FABRIC_CFG_PATH=`pwd`
+        export CORE_PEER_TLS_ENABLED=true
+        export CORE_PEER_TLS_CERT_FILE=./tls/client.crt
+        export CORE_PEER_TLS_KEY_FILE=./tls/client.key
+        export CORE_PEER_MSPCONFIGPATH=./msp
+        export CORE_PEER_ADDRESS=peer1.org2.za.com:7051
+        export CORE_PEER_LOCALMSPID=Org2MSP
+        export CORE_PEER_TLS_ROOTCERT_FILE=./tls/ca.crt
+        export CORE_PEER_ID=peer1.org2.za.com
+        export CORE_LOGGING_LEVEL=INFO
+        peer $*
+
+  - name:  "授权 User1@org2.za.com 具有 admin 的权限"
+    command: 'scp {{ fabric_deploy_home }}/users/User1@org2.za.com/msp/admincerts/User1@org2.za.com-cert.pem  root\@peer1.org2.za.com:/opt/fabric/peer/msp/admincerts'
+    args:
+      chdir: '{{ fabric_deploy_home }}'
+
+

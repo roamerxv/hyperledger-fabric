@@ -1,0 +1,11 @@
+- hosts: cli  
+  vars:
+    fabric_deploy_home:  /root/fabric/fabric-deploy
+  remote_user: root
+  gather_facts: no
+  tasks:
+
+  - name:  "把 orderer.za.com 目录复制到 orderer.za.com机器上"
+    shell: 'scp -r {{ fabric_deploy_home }}/orderer.za.com/*  root\@orderer.za.com:/opt/fabric/orderer/'
+    args:
+      chdir: '{{ fabric_deploy_home }}'

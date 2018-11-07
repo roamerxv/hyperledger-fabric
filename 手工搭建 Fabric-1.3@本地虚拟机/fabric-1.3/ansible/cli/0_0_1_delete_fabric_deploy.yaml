@@ -1,0 +1,55 @@
+- hosts: cli  
+  vars:
+    fabric_deploy_home:  /root/fabric/fabric-deploy
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "删除 {{ fabric_deploy_home }}/certs 目录"
+    file:
+      path: '{{ fabric_deploy_home }}/certs'
+      state: absent
+  - name:  "删除 {{ fabric_deploy_home }}/config 目录"
+    file:
+      path: '{{ fabric_deploy_home }}/config'
+      state: absent
+  - name:  "删除 {{ fabric_deploy_home }}/bin 目录"
+    file:
+      path: '{{ fabric_deploy_home }}/bin'
+      state: absent    
+  - name:  "删除 {{ fabric_deploy_home }}/users 目录"
+    file:
+      path: '{{ fabric_deploy_home }}/users'
+      state: absent
+  - name:  "删除 {{ fabric_deploy_home }}/orderer.za.com 目录"
+    file:
+      path: '{{ fabric_deploy_home }}/orderer.za.com'
+      state: absent
+  - name:  "删除 {{ fabric_deploy_home }}/peer0.org1.za.com 目录"
+    file:
+      path: '{{ fabric_deploy_home }}/peer0.org1.za.com'
+      state: absent
+  - name:  "删除 {{ fabric_deploy_home }}/peer0.org2.za.com 目录"
+    file:
+      path: '{{ fabric_deploy_home }}/peer0.org2.za.com'
+      state: absent
+  - name:  "删除 {{ fabric_deploy_home }}/peer1.org1.za.com 目录"
+    file:
+      path: '{{ fabric_deploy_home }}/peer1.org1.za.com'
+      state: absent
+  - name:  "删除 {{ fabric_deploy_home }}/peer1.org2.za.com 目录"
+    file:
+      path: '{{ fabric_deploy_home }}/peer1.org2.za.com'
+      state: absent
+  - name:  "删除 {{ fabric_deploy_home }}/genesisblock 文件"
+    file:
+      path: '{{ fabric_deploy_home }}/genesisblock'
+      state: absent
+  - name:  "删除 {{ fabric_deploy_home }}/mychannel.tx 文件"
+    file:
+      path: '{{ fabric_deploy_home }}/mychannel.tx'
+      state: absent
+  - name:  "删除 {{ fabric_deploy_home }}/configtx.yaml  文件"
+    file:
+      path: '{{ fabric_deploy_home }}/configtx.yaml '
+      state: absent
+    

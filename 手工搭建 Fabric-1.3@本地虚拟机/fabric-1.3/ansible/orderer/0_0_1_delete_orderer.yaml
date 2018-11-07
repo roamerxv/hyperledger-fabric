@@ -1,0 +1,16 @@
+- hosts: orderer  
+  vars:
+    orderer_home:  /opt/fabric/orderer
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "删除 {{ orderer_home }} 目录"
+    file:
+      path: '{{ orderer_home }}'
+      state: absent
+  - name: "建立 {{ orderer_home }} 目录"
+    file: 
+      path: '{{ orderer_home }}'
+      state: directory
+    
+

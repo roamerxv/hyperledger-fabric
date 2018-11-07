@@ -1,0 +1,16 @@
+- hosts: peers  
+  vars:
+    peer_home:  /opt/fabric/peer
+  remote_user: root
+  gather_facts: no
+  tasks:
+  - name:  "删除 {{ peer_home }} 目录"
+    file:
+      path: '{{ peer_home }}'
+      state: absent
+  - name: "建立 {{ peer_home }} 目录"
+    file: 
+      path: '{{ peer_home }}'
+      state: directory
+    
+

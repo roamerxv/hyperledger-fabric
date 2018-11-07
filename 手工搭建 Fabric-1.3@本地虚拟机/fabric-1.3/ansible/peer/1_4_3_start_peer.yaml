@@ -1,4 +1,5 @@
-- hosts: peers  
+- name: 开始启动 在所有的 peer 主机上的 peer 进程
+  hosts: peers  
   vars:
   remote_user: root
   gather_facts: no
